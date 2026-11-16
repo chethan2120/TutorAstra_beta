@@ -44,20 +44,20 @@ export default function AdminLoginPage() {
       <div className="max-w-md w-full bg-white rounded-3xl p-8 sm:p-10 shadow-card-hover space-y-6">
         <div className="text-center space-y-2">
           <Link href="/" className="inline-block mb-3">
-            <img
-              src="/logo-light.svg"
-              alt="EdNxt Logo"
-              width={175}
-              height={40}
-              className="h-10 w-auto mx-auto"
-              style={{ maxHeight: '40px', width: 'auto', display: 'block' }}
-            />
+            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#F5D45A] shadow-md mx-auto mb-2 bg-[#270052]">
+              <img
+                src="/tutorastra-logo.jpg"
+                alt="TutorAstra Logo"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="text-xl font-black text-royal tracking-tight">Tutor<span className="text-[#D4A017]">Astra</span></div>
           </Link>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-soft-blue text-brand-blue text-xs font-bold uppercase">
-            <Shield className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 text-purple-900 border border-purple-200 text-xs font-bold uppercase">
+            <Shield className="w-3.5 h-3.5 text-purple-700" />
             <span>Admin Management Console</span>
           </div>
-          <h1 className="text-2xl font-black text-navy mt-2">Team Authentication</h1>
+          <h1 className="text-2xl font-black text-royal mt-2">Team Authentication</h1>
           <p className="text-xs text-slate-500">
             Sign in to manage courses, update curriculum topics, and process parent enquiries.
           </p>
@@ -80,7 +80,7 @@ export default function AdminLoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@ednxt.co"
+                placeholder="admin@tutorastra.com"
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-sm text-navy placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
               />
             </div>

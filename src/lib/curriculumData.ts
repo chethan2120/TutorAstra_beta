@@ -1399,7 +1399,7 @@ export const ALL_CURRICULA: CurriculumTopic[] = [
     ],
     learningApproach: 'Capstone mentorship model with student-led prototyping and oral defense.',
     assessments: ['Prototype Milestone Check (Week 6)', 'Final Capstone Project Defense & Exhibition (Week 12)'],
-    capstone: 'EdNxt AI Future Innovator Showcase: Presenting a working prototype and impact study'
+    capstone: 'TutorAstra AI Future Innovator Showcase: Presenting a working prototype and impact study'
   },
 
   // ==================== PUBLIC SPEAKING (LEVELS 1, 2, 3) ====================
@@ -1492,15 +1492,15 @@ export const ALL_CURRICULA: CurriculumTopic[] = [
         practicalActivity: 'Scripting and rehearsing a 5-minute keynote talk'
       },
       {
-        title: 'Level 3 Capstone: EdNxt Youth Summit Orator Showcase',
+        title: 'Level 3 Capstone: TutorAstra Youth Summit Orator Showcase',
         description: 'Full-length 5-minute keynote speech delivered before an audience with professional adjudicator rubric scoring.',
         subtopics: ['Stage presence mastery: Moving with purpose, natural gestures, confident poise', 'Humor, vulnerability, and gravitas balance', 'Comprehensive rubric scoring across content, delivery, structure, and stage presence'],
-        practicalActivity: 'Delivering the 5-minute TED-style keynote at the EdNxt Youth Summit'
+        practicalActivity: 'Delivering the 5-minute TED-style keynote at the TutorAstra Youth Summit'
       }
     ],
     learningApproach: 'Executive speaker coaching, multimedia rehearsal, and live public summit delivery.',
-    assessments: ['Panel Moderation Simulation (Week 6)', 'EdNxt Youth Summit TED-Style Keynote Defense (Week 12)'],
-    capstone: 'Level 3 Capstone: 5-minute EdNxt Youth Summit TED-Style Talk on a global issue'
+    assessments: ['Panel Moderation Simulation (Week 6)', 'TutorAstra Youth Summit TED-Style Keynote Defense (Week 12)'],
+    capstone: 'Level 3 Capstone: 5-minute TutorAstra Youth Summit TED-Style Talk on a global issue'
   }
 ];
 

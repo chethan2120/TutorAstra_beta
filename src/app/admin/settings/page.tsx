@@ -215,7 +215,7 @@ export default function AdminSettingsPage() {
                 <label className="block text-xs font-bold text-navy mb-1">Brand Name:</label>
                 <input
                   type="text"
-                  value={settings['site_name'] || 'EdNxt Academy'}
+                  value={settings['site_name'] || 'TutorAstra'}
                   onChange={(e) => handleSettingChange('site_name', e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-navy"
                 />
@@ -225,7 +225,7 @@ export default function AdminSettingsPage() {
                 <label className="block text-xs font-bold text-navy mb-1">Main Tagline:</label>
                 <input
                   type="text"
-                  value={settings['tagline'] || 'Build Strong Foundations. Prepare for Tomorrow.'}
+                  value={settings['tagline'] || 'Your Ambition. Our Mission.'}
                   onChange={(e) => handleSettingChange('tagline', e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-navy"
                 />

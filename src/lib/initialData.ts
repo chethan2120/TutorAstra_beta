@@ -34,7 +34,7 @@ export const INITIAL_PACKAGES = [
       'Project-Based Learning with Capstone Presentations',
       'Small interactive cohorts for maximum speaking time',
       'Video-recorded speech review with rubric feedback',
-      'Official EdNxt Capstone Project Certificate'
+      'Official TutorAstra Capstone Project Certificate'
     ]),
     is_popular: 1,
     is_published: 1
@@ -146,7 +146,7 @@ export const INITIAL_COURSES = [
       'Conquer stage fright through proven posture, breathing, and vocal projection techniques',
       'Deliver impromptu speeches on the spot with the PREP framework',
       'Master parliamentary debating, identifying logical fallacies, and framing rebuttals',
-      'Deliver an inspiring 5-minute capstone TED-style talk at the EdNxt Youth Summit'
+      'Deliver an inspiring 5-minute capstone TED-style talk at the TutorAstra Youth Summit'
     ]),
     image_url: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1200&q=80',
     badge: 'Leadership Accelerator',
@@ -158,21 +158,21 @@ export const INITIAL_COURSES = [
 
 export const INITIAL_SETTINGS: Record<string, string> = {
   // General & Contact
-  'site_name': 'EdNxt Academy',
-  'tagline': 'Build Strong Foundations. Prepare for Tomorrow.',
-  'hero_subheading': 'A complete learning programme for Grades 6–8 — Academic Excellence + Future-Ready Skills.',
-  'contact_email': 'admissions@ednxt.co',
+  'site_name': 'TutorAstra',
+  'tagline': 'Your Ambition. Our Mission.',
+  'hero_subheading': 'Discover the power of one-to-one learning with dedicated tutors, personalised study plans and a learning experience designed around your ambitions.',
+  'contact_email': 'admissions@tutorastra.com',
   'contact_phone': '+971 4 234 5678',
   'whatsapp_number': '+971 50 123 4567',
   'office_address': 'Dubai Knowledge Park, Block 12, Dubai, United Arab Emirates',
-  'academic_calendar_info': 'Three 12-week terms aligned with the UAE Ministry of Education school calendar.',
+  'academic_calendar_info': 'Flexible schedules and tailored 1-on-1 pacing aligned with international curricula.',
   // Pricing display
   'price_core_bundle': '2999',
   'price_future_bundle': '2999',
   'price_full_bundle': '4999',
   // Announcements
   'announcement_banner_active': 'true',
-  'announcement_text': '🚀 Spring Term Enrolment Open! Book your free 1-on-1 trial class today.',
+  'announcement_text': '✨ Experience the TutorAstra Difference: Book Your Free 1-on-1 Academic Consultation Today.',
   // Social links
   'social_linkedin': 'https://linkedin.com',
   'social_instagram': 'https://instagram.com',

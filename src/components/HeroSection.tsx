@@ -1,232 +1,306 @@
 'use client';
 
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
 import {
-  Sparkles,
   ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Users,
+  BookOpen,
+  Award,
+  TrendingUp,
+  Sparkles,
   CheckCircle2,
-  Compass,
-  BarChart3,
-  HelpCircle,
-  ChevronDown,
-  ShieldCheck,
-  Award
+  GraduationCap
 } from 'lucide-react';
 
-export default function HeroSection() {
-  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+interface HeroSlide {
+  id: number;
+  stage: string;
+  headline: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+  primaryCtaText: string;
+  primaryCtaTarget: string;
+  secondaryCtaText: string;
+  secondaryCtaTarget: string;
+}
 
-  const heroFaqs = [
+export default function HeroSection() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const slides: HeroSlide[] = [
     {
-      q: 'Which curriculum is right for my child: CBSE or British KS3?',
-      a: 'We support both seamlessly! CBSE Grade 6 maps to British Year 7, Grade 7 to Year 8, and Grade 8 to Year 9. Both pathways share our dedicated future-skills streams (AI & Public Speaking).'
+      id: 1,
+      stage: 'Step 1 of 3 • Dedicated Mentorship',
+      headline: 'Personalised One-to-One Tutoring for Real Academic Growth.',
+      description:
+        'Connect directly with vetted subject authorities who identify concept gaps, adapt to your pace, and build genuine understanding.',
+      image: '/hero-slide-1.jpg',
+      imageAlt: 'Female academic tutor teaching a high school student in a navy hoodie with an open laptop',
+      primaryCtaText: 'Book a Free Consultation',
+      primaryCtaTarget: '#consultation',
+      secondaryCtaText: 'How It Works',
+      secondaryCtaTarget: '#how-it-works',
     },
     {
-      q: 'How does the 100% Free Trial class work?',
-      a: 'Parents select any stream (Science, Maths, AI, or Speech). Your child attends a live 45-minute 1-on-1 session with a mentor + diagnostic benchmark. Zero payment or commitment required.'
+      id: 2,
+      stage: 'Step 2 of 3 • Independent Mastery',
+      headline: 'Build Confident Study Habits with Targeted Guidance.',
+      description:
+        'Structured weekly practice and diagnostic checkpoints help students master difficult topics before exams approach.',
+      image: '/hero-slide-2.jpg',
+      imageAlt: 'High school student in navy hoodie studying independently at a clean desk with books and laptop',
+      primaryCtaText: 'Explore Subjects',
+      primaryCtaTarget: '#subjects',
+      secondaryCtaText: 'Try AI Tutor Tool',
+      secondaryCtaTarget: '#ai-tutor',
     },
     {
-      q: 'What is the weekly schedule and live class duration?',
-      a: 'Science & Maths feature two 60-minute live sessions weekly + weekly homework + 1 dedicated doubt-clearing slot. AI & Public Speaking feature one 60–75 minute studio session weekly.'
+      id: 3,
+      stage: 'Step 3 of 3 • Measurable Success',
+      headline: 'Achieve Exam Excellence and Reach Your Full Potential.',
+      description:
+        'Celebrate clear milestones and top grades with personalised study roadmaps crafted specifically for your ambitions.',
+      image: '/hero-slide-3.jpg',
+      imageAlt: 'Student holding marked exam paper stamped A-plus with a confident smile',
+      primaryCtaText: 'Start Your Learning Journey',
+      primaryCtaTarget: '#consultation',
+      secondaryCtaText: 'View Parent Reviews',
+      secondaryCtaTarget: '#testimonials',
     },
-    {
-      q: 'Are classes interactive or pre-recorded videos?',
-      a: '100% live and interactive in small cohorts. Teachers call on students, ask Socratic questions, review homework live, and provide immediate personalized feedback.'
-    }
   ];
 
-  const toggleFaq = (idx: number) => {
-    setActiveFaq(activeFaq === idx ? null : idx);
+  // Auto-advance carousel every 6 seconds when not hovered
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [isPaused, slides.length]);
+
+  const handlePrev = () => {
+    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
 
-  return (
-    <section className="relative overflow-hidden pt-2 pb-14 lg:pt-4 lg:pb-20 bg-gradient-to-b from-white via-soft-blue/20 to-edbg">
-      {/* Decorative Subtle Background Orbs */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-gradient-to-tr from-brand-lime/15 via-soft-blue/40 to-transparent blur-3xl pointer-events-none -z-10" />
+  const handleNext = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
 
+  const active = slides[currentSlide];
+
+  const scrollTo = (e: React.MouseEvent<HTMLAnchorElement>, target: string) => {
+    e.preventDefault();
+    const id = target.replace('#', '');
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Stats data requested by user
+  const stats = [
+    {
+      number: '10K+',
+      label: 'Happy Students',
+      detail: 'Across Grades 6–12 & British Syllabi',
+      icon: GraduationCap,
+      color: '#310064',
+      bg: '#F5F0FF',
+    },
+    {
+      number: '100K+',
+      label: 'Learning Classes',
+      detail: 'Live 1-on-1 Sessions Conducted',
+      icon: BookOpen,
+      color: '#310064',
+      bg: '#FBFBFC',
+    },
+    {
+      number: '300+',
+      label: 'Expert Tutors',
+      detail: 'Top 2% Vetted Subject Authorities',
+      icon: Award,
+      color: '#B8860B',
+      bg: '#FFF9E6',
+    },
+    {
+      number: '98%',
+      label: 'Success Rate',
+      detail: 'Concept Mastery & Score Improvement',
+      icon: TrendingUp,
+      color: '#166534',
+      bg: '#F0FDF4',
+    },
+  ];
+
+  return (
+    <section
+      id="home"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      className="py-12 sm:py-16 lg:py-20 bg-white border-b border-[#E5E5EB] relative overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main Hero Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
-          {/* Left Column: Messaging & CTAs (7 cols on lg) */}
-          <div className="lg:col-span-7 space-y-5 text-center lg:text-left pt-1">
-            {/* Top Grade Badge - Tightened spacing */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-soft-blue border border-blue-200/60 text-brand-blue text-xs font-bold shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-brand-blue animate-pulse" />
-              <span>Dedicated Middle School Programmes • Grades 6–8</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          {/* ================= Left Column: Headline, Copy & Actions (6 cols) ================= */}
+          <div className="lg:col-span-6 space-y-6">
+            {/* Stage Indicator Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#FBFBFC] border border-[#E5E5EB] text-xs font-heading font-semibold text-[#310064] tracking-wide">
+              <span className="w-2 h-2 rounded-full bg-[#F4CC45]" />
+              <span>{active.stage}</span>
             </div>
 
-            {/* Headline with required text and highlight */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-navy leading-[1.12] tracking-tight">
-              Build <span className="highlight-lime">Strong Foundations</span>.<br />
-              Prepare for <span className="text-brand-blue">Tomorrow</span>.
+            {/* Main Headline */}
+            <h1 className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1E1E24] tracking-tight leading-[1.18] min-h-[3.6em] sm:min-h-[2.4em] flex items-center">
+              {active.headline}
             </h1>
 
-            {/* Description */}
-            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
-              A complete learning programme for Grades 6–8 — <strong className="text-navy font-semibold">Academic Excellence + Future-Ready Skills</strong>. Aligned with CBSE and British KS3 curricula.
+            {/* Concise Supporting Description (2 sentences or fewer) */}
+            <p className="text-base sm:text-lg text-[#5A5A65] font-normal leading-relaxed max-w-xl">
+              {active.description}
             </p>
 
-            {/* Call To Action Buttons */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <Link
-                href="/free-trial"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full font-bold text-base bg-navy text-white hover:bg-navy-dark shadow-soft-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+            {/* Actions (Consistent Button System) */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <a
+                href={active.primaryCtaTarget}
+                onClick={(e) => scrollTo(e, active.primaryCtaTarget)}
+                className="btn-primary text-sm font-heading font-semibold"
               >
-                <span>Start Your Free Trial</span>
-                <ArrowRight className="w-5 h-5 text-brand-lime" />
-              </Link>
+                <span>{active.primaryCtaText}</span>
+                <ArrowRight className="w-4 h-4" />
+              </a>
 
-              <Link
-                href="/curriculum/cbse"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-bold text-base bg-white text-navy border-2 border-slate-200 hover:border-brand-blue hover:text-brand-blue transition-all shadow-xs"
+              <a
+                href={active.secondaryCtaTarget}
+                onClick={(e) => scrollTo(e, active.secondaryCtaTarget)}
+                className="btn-secondary text-sm font-heading font-semibold"
               >
-                <Compass className="w-5 h-5" />
-                <span>Explore Our Programmes</span>
-              </Link>
+                <span>{active.secondaryCtaText}</span>
+              </a>
             </div>
 
-            {/* Required Feature Indicators */}
-            <div className="pt-6 border-t border-slate-200/80 grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="flex items-center gap-3 justify-center lg:justify-start">
-                <div className="w-8 h-8 rounded-full bg-soft-green text-emerald-600 flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="w-4 h-4" />
-                </div>
-                <div className="text-left">
-                  <div className="text-[10px] text-slate-400 font-bold uppercase">Dual Pathway</div>
-                  <div className="text-xs font-bold text-navy">CBSE & British Curriculum</div>
-                </div>
+            {/* Carousel Navigation Bar */}
+            <div className="pt-6 border-t border-[#E5E5EB] flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {slides.map((s, idx) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => setCurrentSlide(idx)}
+                    aria-label={`Jump to slide ${idx + 1}`}
+                    className={`h-2.5 rounded-full transition-all ${
+                      currentSlide === idx
+                        ? 'w-8 bg-[#310064]'
+                        : 'w-2.5 bg-[#E5E5EB] hover:bg-[#D1D1DB]'
+                    }`}
+                  />
+                ))}
               </div>
 
-              <div className="flex items-center gap-3 justify-center lg:justify-start">
-                <div className="w-8 h-8 rounded-full bg-soft-purple text-purple-600 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-4 h-4" />
-                </div>
-                <div className="text-left">
-                  <div className="text-[10px] text-slate-400 font-bold uppercase">Comprehensive</div>
-                  <div className="text-xs font-bold text-navy">Four Powerful Streams</div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 justify-center lg:justify-start">
-                <div className="w-8 h-8 rounded-full bg-soft-blue text-brand-blue flex items-center justify-center shrink-0">
-                  <BarChart3 className="w-4 h-4" />
-                </div>
-                <div className="text-left">
-                  <div className="text-[10px] text-slate-400 font-bold uppercase">Continuous Tracking</div>
-                  <div className="text-xs font-bold text-navy">Assessments & Reports</div>
-                </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  aria-label="Previous slide"
+                  className="w-9 h-9 rounded-md border border-[#E5E5EB] bg-white hover:bg-[#F5F5F7] text-[#1E1E24] flex items-center justify-center transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  aria-label="Next slide"
+                  className="w-9 h-9 rounded-md border border-[#E5E5EB] bg-white hover:bg-[#F5F5F7] text-[#1E1E24] flex items-center justify-center transition-colors"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Natural Educational Photography & Trust Badges (5 cols on lg) */}
-          <div className="lg:col-span-5 relative mt-4 lg:mt-0">
-            <div className="relative mx-auto max-w-md lg:max-w-none">
-              {/* Outer Glow Halo */}
-              <div className="absolute -inset-4 rounded-4xl bg-gradient-to-tr from-brand-blue/20 to-brand-lime/30 blur-2xl opacity-60 -z-10" />
-
-              {/* Main Card with Student Photo */}
-              <div className="rounded-3xl overflow-hidden shadow-card-hover border-4 border-white bg-white">
-                <div className="relative h-80 sm:h-96 lg:h-[400px] w-full bg-slate-100">
-                  <img
-                    src="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1000&q=80"
-                    alt="Middle school students actively learning together in a bright, modern classroom"
-                    className="w-full h-full object-cover object-center"
-                    loading="eager"
-                  />
-                  {/* Subtle Image Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/70 via-transparent to-transparent" />
-
-                  {/* Floating Bottom Badge */}
-                  <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 bg-white/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl shadow-soft flex items-center justify-between border border-white/60">
-                    <div className="flex items-center gap-2.5 sm:gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-soft-green flex items-center justify-center text-emerald-600 font-black text-base shrink-0">
-                        1:1
-                      </div>
-                      <div className="overflow-hidden">
-                        <div className="text-xs font-bold text-navy truncate">Zero-Risk Free Trial</div>
-                        <div className="text-[11px] text-slate-500 truncate">Pick any stream • No payment required</div>
-                      </div>
-                    </div>
-                    <Link
-                      href="/free-trial"
-                      className="px-3.5 py-1.5 rounded-lg bg-brand-blue text-white text-xs font-bold hover:bg-brand-blue-dark transition-colors shrink-0 ml-2"
-                    >
-                      Book Now
-                    </Link>
-                  </div>
-                </div>
+          {/* ================= Right Column: High Quality Photography with Floating 2D Badges (6 cols) ================= */}
+          <div className="lg:col-span-6 relative">
+            {/* 2D Floating Badge: 1-on-1 Tutoring (Top-Left) */}
+            <div className="hidden sm:flex absolute -top-4 -left-4 z-20 items-center gap-2.5 px-3.5 py-2 rounded-lg bg-white/95 backdrop-blur-md border border-[#E5E5EB] shadow-md animate-float-slow">
+              <div className="w-8 h-8 rounded-md bg-[#F5F0FF] text-[#310064] flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-[#F4CC45]" />
               </div>
-
-              {/* Floating Top Floating Feature Pill */}
-              <div className="hidden sm:flex absolute -top-3 left-3 sm:left-4 bg-white py-2 px-3.5 rounded-2xl shadow-soft border border-slate-100 items-center gap-2.5">
-                <div className="w-7 h-7 rounded-full bg-brand-lime/40 text-navy font-black flex items-center justify-center text-xs">
-                  ★
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-navy">Academic + Future-Ready</div>
-                  <div className="text-[10px] text-slate-500">Science • Maths • AI • Speech</div>
-                </div>
+              <div>
+                <p className="text-xs font-heading font-bold text-[#1E1E24]">One Teacher, One Student</p>
+                <p className="text-[11px] text-[#5A5A65]">100% Dedicated Attention</p>
               </div>
+            </div>
+
+            {/* 2D Floating Badge: Top 2% Tutors (Bottom-Right) */}
+            <div className="hidden sm:flex absolute -bottom-4 -right-4 z-20 items-center gap-2.5 px-3.5 py-2 rounded-lg bg-white/95 backdrop-blur-md border border-[#E5E5EB] shadow-md animate-float-reverse">
+              <div className="w-8 h-8 rounded-md bg-[#FFF9E6] text-[#B8860B] flex items-center justify-center font-bold text-xs">
+                ⭐
+              </div>
+              <div>
+                <p className="text-xs font-heading font-bold text-[#1E1E24]">Top 2% Vetted Tutors</p>
+                <p className="text-[11px] text-[#5A5A65]">Subject-Matter Authorities</p>
+              </div>
+            </div>
+
+            {/* 2D Floating Chip: Diagnostic (Bottom-Left) */}
+            <div className="hidden lg:flex absolute bottom-8 -left-5 z-20 items-center gap-2 px-3 py-1.5 rounded-md bg-white/95 backdrop-blur-md border border-[#E5E5EB] shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[11px] font-sans font-semibold text-[#1E1E24]">Customised Study Plans</span>
+            </div>
+
+            {/* Main Photographic Frame */}
+            <div className="relative rounded-xl overflow-hidden border border-[#E5E5EB] bg-[#FBFBFC] shadow-card aspect-[16/10] sm:aspect-[16/10]">
+              <img
+                key={active.image}
+                src={active.image}
+                alt={active.imageAlt}
+                className="w-full h-full object-cover transition-opacity duration-300"
+              />
             </div>
           </div>
         </div>
 
-        {/* Hero Quick FAQ Module ("Parents Ask Most - Fast Answers") */}
-        <div className="mt-12 pt-8 border-t border-slate-200/70">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-soft border border-slate-200/80">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-soft-blue text-brand-blue flex items-center justify-center shrink-0">
-                  <HelpCircle className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="text-base font-black text-navy">Parents Ask Most — Quick Answers</h3>
-                  <p className="text-xs text-slate-500">Instant answers before booking your free trial class</p>
-                </div>
-              </div>
-              <Link
-                href="/packages"
-                className="text-xs font-bold text-brand-blue hover:text-navy inline-flex items-center gap-1 self-start sm:self-auto"
-              >
-                <span>View All FAQs & Tuition</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-              {heroFaqs.map((faq, idx) => (
+        {/* ================= Stats Counter Bar below Hero Section ================= */}
+        <div className="mt-14 pt-10 border-t border-[#E5E5EB]">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {stats.map((stat) => {
+              const Icon = stat.icon;
+              return (
                 <div
-                  key={idx}
-                  className="rounded-2xl border border-slate-200/80 bg-slate-50/60 overflow-hidden transition-all duration-200 hover:border-brand-blue/40"
+                  key={stat.label}
+                  className="card-standard p-5 sm:p-6 bg-white hover:border-[#310064]/30 transition-all group flex flex-col justify-between"
                 >
-                  <button
-                    type="button"
-                    onClick={() => toggleFaq(idx)}
-                    className="w-full p-4 text-left flex items-center justify-between gap-3 text-xs sm:text-sm font-bold text-navy hover:text-brand-blue transition-colors"
-                  >
-                    <span className="flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-white text-slate-400 text-xs flex items-center justify-center font-bold shrink-0 border border-slate-200">
-                        {idx + 1}
-                      </span>
-                      <span>{faq.q}</span>
-                    </span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${
-                        activeFaq === idx ? 'rotate-180 text-brand-blue' : ''
-                      }`}
-                    />
-                  </button>
-
-                  {activeFaq === idx && (
-                    <div className="px-4 pb-4 pt-1 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-white animate-in fade-in duration-200">
-                      {faq.a}
+                  <div className="flex items-center justify-between mb-3">
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center border border-[#E5E5EB]"
+                      style={{ backgroundColor: stat.bg }}
+                    >
+                      <Icon className="w-5 h-5" style={{ color: stat.color }} />
                     </div>
-                  )}
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#6A6A76] bg-[#F5F5F7] px-2 py-0.5 rounded">
+                      Verified
+                    </span>
+                  </div>
+
+                  <div>
+                    <div className="text-2xl sm:text-3xl font-heading font-extrabold text-[#310064] tracking-tight group-hover:scale-105 transition-transform duration-200 origin-left">
+                      {stat.number}
+                    </div>
+                    <h3 className="text-sm font-heading font-bold text-[#1E1E24] mt-1">
+                      {stat.label}
+                    </h3>
+                    <p className="text-xs text-[#5A5A65] font-sans mt-0.5 leading-relaxed">
+                      {stat.detail}
+                    </p>
+                  </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>

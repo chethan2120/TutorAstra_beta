@@ -59,36 +59,21 @@ export default function ScrollAction() {
         />
       </div>
 
-      {/* 2. Floating Action Controls (Appears on Scroll) */}
+      {/* 2. Floating Back To Top Button (Positioned Bottom-Left to Avoid Floating Chatbot Clashes) */}
       <div
-        className={`fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3 transition-all duration-300 ${
+        className={`fixed bottom-6 left-6 z-40 transition-all duration-300 ${
           showScrollTop
             ? 'opacity-100 translate-y-0 pointer-events-auto'
             : 'opacity-0 translate-y-6 pointer-events-none'
         }`}
-        style={{ position: 'fixed', bottom: '1.5rem', right: '1.5rem', zIndex: 40 }}
       >
-        {/* Floating Fast Trial Pill */}
-        <Link
-          href="/free-trial"
-          className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-navy text-white text-xs font-bold shadow-card-hover hover:bg-navy-dark hover:scale-105 border border-white/20 transition-all duration-200 group"
-          title="Book your 1-on-1 free trial session"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-brand-lime group-hover:rotate-12 transition-transform" />
-          <span>Book Free Trial</span>
-          <span className="text-[10px] bg-brand-blue text-white px-2 py-0.5 rounded-full font-semibold">
-            1-on-1
-          </span>
-        </Link>
-
-        {/* Back To Top Button */}
         <button
           type="button"
           onClick={scrollToTop}
           aria-label="Scroll back to top"
-          className="w-11 h-11 rounded-full bg-white text-navy border border-slate-200/90 shadow-card-hover hover:bg-navy hover:text-white hover:border-navy flex items-center justify-center transition-all duration-200 hover:-translate-y-1 group"
+          className="w-10 h-10 rounded-lg bg-white text-[#310064] border border-[#E5E5EB] shadow-md hover:bg-[#310064] hover:text-white flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5 group"
         >
-          <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
+          <ArrowUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
         </button>
       </div>
     </>

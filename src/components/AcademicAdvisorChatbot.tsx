@@ -69,7 +69,7 @@ const FAQ_KNOWLEDGE_BASE = [
   {
     keywords: ['teacher', 'faculty', 'mentor', 'tutor', 'qualifications'],
     answer:
-      'All EdNxt mentors are vetted subject-matter specialists with proven experience in CBSE and British KS3 pedagogy. We maintain an honest, high-retention teaching environment without exaggerated marketing claims.'
+      'All TutorAstra mentors are vetted subject-matter specialists with proven experience in 1-on-1 personalised pedagogy. We maintain an honest, high-retention teaching environment tailored around your child’s goals.'
   },
   {
     keywords: ['online', 'offline', 'zoom', 'in-person', 'platform'],
@@ -103,7 +103,7 @@ export default function AcademicAdvisorChatbot() {
       {
         id: 'msg-init-1',
         sender: 'bot',
-        text: "Hello! 👋 I'm the **EdNxt Academic Advisor**.",
+        text: "Hello! 👋 I'm your **TutorAstra Academic Advisor**.",
         timestamp: formatTime()
       },
       {
@@ -260,14 +260,14 @@ export default function AcademicAdvisorChatbot() {
       termFocus = 'Vocal poise forged before adolescent teenage self-consciousness sets in.';
     } else if (stream === 'all') {
       targetUrl = '/packages';
-      title = 'EdNxt Full Academic & Future-Skills Bundle';
-      targetButtonLabel = 'Redirect to Course Packages →';
+      title = 'TutorAstra Comprehensive One-to-One Programme';
+      targetButtonLabel = 'Redirect to Learning Options →';
       highlights = [
-        'All 4 Streams: Science + Maths + AI + Public Speaking',
-        'Core + Future-Ready bundle with full academic calendar',
-        'Structured parent report cards after every 12-week term'
+        'Customised Curriculum: Mathematics, Sciences, Languages & More',
+        'Personalised 1-on-1 dedicated mentor assigned to your schedule',
+        'Continuous progress tracking and structured diagnostic reports'
       ];
-      termFocus = 'Complete holistic development: academic excellence plus 21st-century voice.';
+      termFocus = 'Complete holistic development: academic excellence and confident concept mastery.';
     }
 
     // Build the bot recommendation response
@@ -361,13 +361,12 @@ export default function AcademicAdvisorChatbot() {
           {
             id: `bot-fallback-${Date.now()}`,
             sender: 'bot',
-            text: `Thank you for your question! EdNxt provides transparent, honest educational programmes for Grades 6–8 across **Science, Mathematics, AI for Students, and Public Speaking**.\n\nWould you like me to guide you to the specific syllabus or would you prefer booking a free 1-on-1 trial class?`,
+            text: `Thank you for your question! TutorAstra provides dedicated one-to-one learning with personalised study plans across **Mathematics, Physics, Chemistry, Biology, Science, English, and more**.\n\nWould you like me to guide you to the right subjects or would you prefer booking a free 1-on-1 consultation?`,
             timestamp: formatTime(),
             options: [
-              { label: '🧭 Guide Me By Child’s Grade', value: 'start', action: 'reset' },
-              { label: '📑 View CBSE Curriculum', value: '/curriculum/cbse', action: 'redirect', payload: '/curriculum/cbse' },
-              { label: '🇬🇧 View British Curriculum', value: '/curriculum/british', action: 'redirect', payload: '/curriculum/british' },
-              { label: '📞 Contact an Academic Counselor', value: '/contact', action: 'redirect', payload: '/contact' }
+              { label: '🧭 Guide Me By Student Grade', value: 'start', action: 'reset' },
+              { label: '⭐ Book Free Consultation', value: '/free-trial', action: 'redirect', payload: '/free-trial' },
+              { label: '📞 Speak with an Academic Advisor', value: '/contact', action: 'redirect', payload: '/contact' }
             ]
           }
         ]);
@@ -378,54 +377,66 @@ export default function AcademicAdvisorChatbot() {
   return (
     <>
       {/* ============================================================
-          FLOATING LAUNCHER BUTTON (Bottom Right)
+          FLOATING LAUNCHER BUTTONS (Chatbot & WhatsApp below)
          ============================================================ */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
-        {!isOpen && (
-          <div className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white border border-slate-200 shadow-card-hover text-xs font-bold text-navy animate-bounce">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Need advice? Find your child’s programme!</span>
-          </div>
-        )}
-
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2.5 select-none">
+        {/* 1. Academic Advisor Chatbot Button */}
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? 'Close Academic Advisor' : 'Open EdNxt Academic Advisor'}
-          className={`w-14 h-14 rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 ${
-            isOpen ? 'bg-navy rotate-90' : 'bg-brand-blue hover:bg-navy'
+          aria-label={isOpen ? 'Close Academic Advisor' : 'Open TutorAstra Academic Advisor'}
+          className={`w-12 h-12 rounded-lg flex items-center justify-center text-white shadow-md transition-all duration-200 transform hover:scale-105 active:scale-95 ${
+            isOpen ? 'bg-[#1E1E24]' : 'bg-[#310064]'
           }`}
         >
           {isOpen ? (
-            <X className="w-6 h-6 text-white" />
+            <X className="w-5 h-5 text-white" />
           ) : (
             <div className="relative">
-              <MessageCircle className="w-7 h-7 text-white" />
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-brand-lime rounded-full border-2 border-brand-blue" />
+              <MessageCircle className="w-5 h-5 text-white" />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#F4CC45] rounded-full border-2 border-[#310064]" />
             </div>
           )}
         </button>
+
+        {/* 2. WhatsApp Button */}
+        {!isOpen && (
+          <a
+            href="https://wa.me/971501234567?text=Hi%20TutorAstra%2C%20I%20would%20like%20to%20inquire%20about%201-on-1%20tutoring"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Chat with TutorAstra on WhatsApp"
+            className="w-12 h-12 rounded-lg bg-[#25D366] hover:bg-[#20ba5a] text-white flex items-center justify-center shadow-md transition-all duration-200 transform hover:scale-105 active:scale-95 group relative"
+          >
+            <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+            </svg>
+            <span className="absolute right-14 px-2.5 py-1 rounded bg-[#1E1E24] text-white text-xs font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none shadow-md">
+              WhatsApp
+            </span>
+          </a>
+        )}
       </div>
 
       {/* ============================================================
           CHATBOT MODAL WINDOW
          ============================================================ */}
       {isOpen && (
-        <div className="fixed inset-x-4 bottom-24 sm:inset-auto sm:right-6 sm:bottom-24 sm:w-[420px] max-h-[85vh] h-[600px] z-50 bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
+        <div className="fixed inset-x-4 bottom-24 sm:inset-auto sm:right-6 sm:bottom-24 sm:w-[420px] max-h-[85vh] h-[600px] z-50 bg-white rounded-3xl shadow-2xl border border-purple-100 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
           {/* Header */}
-          <div className="bg-navy px-5 py-4 text-white flex items-center justify-between border-b border-navy-light shrink-0">
+          <div className="bg-royal px-5 py-4 text-white flex items-center justify-between border-b border-purple-900 shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-brand-lime text-navy flex items-center justify-center font-black shadow-xs">
-                <Bot className="w-5 h-5 text-navy" />
+              <div className="w-10 h-10 rounded-2xl bg-gold text-royal flex items-center justify-center font-black shadow-xs">
+                <Bot className="w-5 h-5 text-royal" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-black tracking-tight text-white">EdNxt Advisor</h3>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-400/30">
+                  <h3 className="text-sm font-black tracking-tight text-white">TutorAstra Advisor</h3>
+                  <span className="px-2 py-0.5 rounded-full bg-gold/20 text-gold-light text-[10px] font-bold border border-gold/30">
                     Live
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-300">Intelligent Programme & Syllabus Finder</p>
+                <p className="text-[11px] text-purple-200">Personalised 1-on-1 Guidance Companion</p>
               </div>
             </div>
 
@@ -434,14 +445,14 @@ export default function AcademicAdvisorChatbot() {
                 type="button"
                 onClick={startConversation}
                 title="Restart Conversation"
-                className="p-1.5 rounded-xl hover:bg-white/10 text-slate-300 hover:text-brand-lime transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white/10 text-slate-300 hover:text-[#F4CC45] transition-colors"
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-xl hover:bg-white/10 text-slate-300 hover:text-white transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white/10 text-slate-300 hover:text-white transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -449,7 +460,7 @@ export default function AcademicAdvisorChatbot() {
           </div>
 
           {/* Messages Scroll Area */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50/70">
+          <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-neutral-50">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -457,45 +468,45 @@ export default function AcademicAdvisorChatbot() {
               >
                 <div className="flex items-start gap-2 max-w-[90%]">
                   {msg.sender === 'bot' && (
-                    <div className="w-7 h-7 rounded-full bg-navy text-brand-lime flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
+                    <div className="w-7 h-7 rounded-lg bg-[#310064] text-[#F4CC45] flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
                       <Sparkles className="w-3.5 h-3.5" />
                     </div>
                   )}
 
                   <div
-                    className={`p-3.5 rounded-2xl text-xs sm:text-[13px] leading-relaxed ${
+                    className={`p-3.5 rounded-lg text-xs leading-relaxed ${
                       msg.sender === 'user'
-                        ? 'bg-brand-blue text-white rounded-tr-xs shadow-xs'
-                        : 'bg-white text-slate-800 rounded-tl-xs shadow-xs border border-slate-200/80'
+                        ? 'bg-[#310064] text-white shadow-xs'
+                        : 'bg-white text-neutral-800 shadow-xs border border-[#E5E5EB]'
                     }`}
                   >
-                    <div className="whitespace-pre-wrap">{msg.text}</div>
+                    <div className="whitespace-pre-wrap font-sans">{msg.text}</div>
 
                     {/* Recommendation Card */}
                     {msg.recommendation && (
-                      <div className="mt-3 p-3.5 rounded-xl bg-edbg border border-blue-200/80 space-y-2.5">
-                        <div className="flex items-center justify-between pb-2 border-b border-blue-100">
-                          <span className="text-[10px] font-bold text-brand-blue uppercase tracking-wider">
+                      <div className="mt-3 p-3.5 rounded-lg bg-[#FBFBFC] border border-[#E5E5EB] space-y-2.5">
+                        <div className="flex items-center justify-between pb-2 border-b border-[#E5E5EB]">
+                          <span className="text-[10px] font-bold text-[#310064] uppercase tracking-wider">
                             {msg.recommendation.curriculumText} • {msg.recommendation.gradeText}
                           </span>
-                          <span className="text-[10px] font-bold text-emerald-700 bg-soft-green px-2 py-0.5 rounded">
+                          <span className="text-[10px] font-bold text-[#310064] bg-neutral-100 px-2 py-0.5 rounded">
                             Recommended
                           </span>
                         </div>
 
-                        <h4 className="text-xs font-black text-navy">{msg.recommendation.title}</h4>
+                        <h4 className="text-xs font-heading font-bold text-[#1E1E24]">{msg.recommendation.title}</h4>
 
-                        <div className="space-y-1.5 text-[11px] text-slate-600">
+                        <div className="space-y-1.5 text-[11px] text-neutral-600 font-sans">
                           {msg.recommendation.highlights.map((h, i) => (
                             <div key={i} className="flex items-start gap-1.5">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-brand-blue shrink-0 mt-0.5" />
+                              <CheckCircle2 className="w-3.5 h-3.5 text-[#310064] shrink-0 mt-0.5" />
                               <span>{h}</span>
                             </div>
                           ))}
                         </div>
 
-                        <div className="p-2 rounded-lg bg-white border border-slate-200/60 text-[10px] text-slate-500">
-                          <strong className="text-navy font-bold">Focus:</strong> {msg.recommendation.termFocus}
+                        <div className="p-2 rounded-md bg-white border border-[#E5E5EB] text-[10px] text-neutral-500">
+                          <strong className="text-[#1E1E24] font-bold">Focus:</strong> {msg.recommendation.termFocus}
                         </div>
                       </div>
                     )}
@@ -510,17 +521,17 @@ export default function AcademicAdvisorChatbot() {
                         key={i}
                         type="button"
                         onClick={() => handleOptionClick(opt)}
-                        className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between gap-2 border ${
+                        className={`w-full text-left px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-between gap-2 border ${
                           opt.action === 'redirect'
-                            ? 'bg-navy text-white hover:bg-brand-blue border-navy shadow-soft'
+                            ? 'bg-[#310064] text-white hover:bg-[#25004c] border-[#310064] shadow-xs'
                             : opt.action === 'reset'
-                            ? 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200'
-                            : 'bg-white hover:bg-soft-blue text-navy hover:text-brand-blue border-slate-200 hover:border-blue-200 shadow-xs'
+                            ? 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border-[#E5E5EB]'
+                            : 'bg-white hover:bg-neutral-50 text-[#1E1E24] hover:text-[#310064] border-[#E5E5EB] shadow-xs'
                         }`}
                       >
                         <span>{opt.label}</span>
                         {opt.action === 'redirect' ? (
-                          <ExternalLink className="w-3.5 h-3.5 shrink-0 text-brand-lime" />
+                          <ExternalLink className="w-3.5 h-3.5 shrink-0 text-[#F4CC45]" />
                         ) : (
                           <ArrowRight className="w-3.5 h-3.5 shrink-0 opacity-60" />
                         )}
@@ -529,27 +540,27 @@ export default function AcademicAdvisorChatbot() {
                   </div>
                 )}
 
-                <span className="text-[10px] text-slate-400 mt-1 px-1">{msg.timestamp}</span>
+                <span className="text-[10px] text-neutral-400 mt-1 px-1">{msg.timestamp}</span>
               </div>
             ))}
             <div ref={messagesEndRef} />
           </div>
 
           {/* Input Form */}
-          <form onSubmit={handleSendMessage} className="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
+          <form onSubmit={handleSendMessage} className="p-2.5 bg-white border-t border-[#E5E5EB] flex items-center gap-2">
             <input
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder="Ask anything (e.g. fees, schedule, trial)..."
-              className="flex-1 px-3.5 py-2 rounded-full border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-blue"
+              className="flex-1 px-3 py-2 rounded-lg border border-[#E5E5EB] text-xs text-[#1E1E24] placeholder:text-neutral-400 focus:outline-none focus:border-[#310064]"
             />
             <button
               type="submit"
               disabled={!inputText.trim()}
-              className="w-9 h-9 rounded-full bg-brand-blue disabled:opacity-40 text-white flex items-center justify-center shrink-0 hover:bg-navy transition-colors"
+              className="w-8 h-8 rounded-lg bg-[#310064] disabled:opacity-40 text-white flex items-center justify-center shrink-0 hover:bg-[#25004c] transition-colors"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-3.5 h-3.5" />
             </button>
           </form>
         </div>

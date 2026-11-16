@@ -71,36 +71,36 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-soft border border-slate-200/80">
+    <div className="bg-white rounded-lg p-6 sm:p-8 border border-[#E5E5EB] shadow-xs">
       {successMessage ? (
-        <div className="text-center py-12 space-y-4">
-          <div className="w-16 h-16 rounded-full bg-soft-green text-emerald-600 flex items-center justify-center mx-auto mb-2">
-            <CheckCircle2 className="w-10 h-10" />
+        <div className="text-center py-10 space-y-3">
+          <div className="w-12 h-12 rounded-lg bg-neutral-100 text-[#310064] flex items-center justify-center mx-auto mb-2">
+            <CheckCircle2 className="w-6 h-6" />
           </div>
-          <h3 className="text-2xl font-black text-navy">Message Received!</h3>
-          <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+          <h3 className="text-xl font-heading font-bold text-[#1E1E24]">Message Received</h3>
+          <p className="text-xs sm:text-sm font-sans text-neutral-600 max-w-md mx-auto leading-relaxed">
             {successMessage}
           </p>
           <button
             type="button"
             onClick={() => setSuccessMessage(null)}
-            className="px-6 py-2.5 rounded-full bg-navy text-white text-xs font-bold hover:bg-navy-dark transition-colors mt-4"
+            className="btn-secondary px-5 py-2 text-xs font-semibold mt-4"
           >
             Send Another Message
           </button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {errorMessage && (
-            <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm flex items-start gap-2.5">
-              <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+            <div className="p-3.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <span>{errorMessage}</span>
             </div>
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-navy mb-1.5">
+              <label className="block text-xs font-semibold text-[#1E1E24] mb-1">
                 Your Full Name <span className="text-rose-500">*</span>
               </label>
               <input
@@ -108,17 +108,17 @@ export default function ContactForm() {
                 placeholder="e.g. David Miller"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className={`w-full px-4 py-3 rounded-xl border text-sm text-navy placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/30 transition-all ${
-                  fieldErrors.name ? 'border-rose-400 bg-rose-50/30' : 'border-slate-200'
+                className={`w-full px-3.5 py-2.5 rounded-lg border text-xs sm:text-sm font-sans text-[#1E1E24] placeholder:text-neutral-400 focus:outline-none focus:border-[#310064] transition-all ${
+                  fieldErrors.name ? 'border-rose-400 bg-rose-50/30' : 'border-[#E5E5EB]'
                 }`}
               />
               {fieldErrors.name && (
-                <p className="text-[11px] text-rose-600 mt-1 font-semibold">{fieldErrors.name}</p>
+                <p className="text-[11px] text-rose-600 mt-1">{fieldErrors.name}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-navy mb-1.5">
+              <label className="block text-xs font-semibold text-[#1E1E24] mb-1">
                 Email Address <span className="text-rose-500">*</span>
               </label>
               <input
@@ -126,19 +126,19 @@ export default function ContactForm() {
                 placeholder="name@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className={`w-full px-4 py-3 rounded-xl border text-sm text-navy placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/30 transition-all ${
-                  fieldErrors.email ? 'border-rose-400 bg-rose-50/30' : 'border-slate-200'
+                className={`w-full px-3.5 py-2.5 rounded-lg border text-xs sm:text-sm font-sans text-[#1E1E24] placeholder:text-neutral-400 focus:outline-none focus:border-[#310064] transition-all ${
+                  fieldErrors.email ? 'border-rose-400 bg-rose-50/30' : 'border-[#E5E5EB]'
                 }`}
               />
               {fieldErrors.email && (
-                <p className="text-[11px] text-rose-600 mt-1 font-semibold">{fieldErrors.email}</p>
+                <p className="text-[11px] text-rose-600 mt-1">{fieldErrors.email}</p>
               )}
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-navy mb-1.5">
+              <label className="block text-xs font-semibold text-[#1E1E24] mb-1">
                 Phone Number (Optional)
               </label>
               <input
@@ -146,61 +146,61 @@ export default function ContactForm() {
                 placeholder="+971 50 123 4567"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-navy placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5E5EB] text-xs sm:text-sm font-sans text-[#1E1E24] placeholder:text-neutral-400 focus:outline-none focus:border-[#310064]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-navy mb-1.5">
+              <label className="block text-xs font-semibold text-[#1E1E24] mb-1">
                 Subject <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
-                placeholder="e.g. Enquiry about Grade 7 Science Schedule"
+                placeholder="e.g. Enquiry about Grade 10 Science Schedule"
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                className={`w-full px-4 py-3 rounded-xl border text-sm text-navy placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/30 transition-all ${
-                  fieldErrors.subject ? 'border-rose-400 bg-rose-50/30' : 'border-slate-200'
+                className={`w-full px-3.5 py-2.5 rounded-lg border text-xs sm:text-sm font-sans text-[#1E1E24] placeholder:text-neutral-400 focus:outline-none focus:border-[#310064] transition-all ${
+                  fieldErrors.subject ? 'border-rose-400 bg-rose-50/30' : 'border-[#E5E5EB]'
                 }`}
               />
               {fieldErrors.subject && (
-                <p className="text-[11px] text-rose-600 mt-1 font-semibold">{fieldErrors.subject}</p>
+                <p className="text-[11px] text-rose-600 mt-1">{fieldErrors.subject}</p>
               )}
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-navy mb-1.5">
+            <label className="block text-xs font-semibold text-[#1E1E24] mb-1">
               Message <span className="text-rose-500">*</span>
             </label>
             <textarea
               rows={4}
-              placeholder="How can our academic team help you today? Ask questions about teachers, curriculum pathways, class timings, or custom packages..."
+              placeholder="How can our academic team help you today? Ask questions about tutors, curriculum pathways, class timings, or personalized learning plans..."
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              className={`w-full px-4 py-3 rounded-xl border text-sm text-navy placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/30 transition-all ${
-                fieldErrors.message ? 'border-rose-400 bg-rose-50/30' : 'border-slate-200'
+              className={`w-full px-3.5 py-2.5 rounded-lg border text-xs sm:text-sm font-sans text-[#1E1E24] placeholder:text-neutral-400 focus:outline-none focus:border-[#310064] transition-all ${
+                fieldErrors.message ? 'border-rose-400 bg-rose-50/30' : 'border-[#E5E5EB]'
               }`}
             />
             {fieldErrors.message && (
-              <p className="text-[11px] text-rose-600 mt-1 font-semibold">{fieldErrors.message}</p>
+              <p className="text-[11px] text-rose-600 mt-1">{fieldErrors.message}</p>
             )}
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-2xl font-bold text-sm bg-navy text-white hover:bg-navy-dark shadow-soft flex items-center justify-center gap-2 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            className="btn-primary w-full py-3 text-xs sm:text-sm font-heading font-semibold flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin text-brand-lime" />
+                <Loader2 className="w-4 h-4 animate-spin text-[#F4CC45]" />
                 <span>Sending Message...</span>
               </>
             ) : (
               <>
-                <Send className="w-4 h-4 text-brand-lime" />
-                <span>Send Message to Admissions</span>
+                <Send className="w-4 h-4 text-[#F4CC45]" />
+                <span>Send Message to Academic Advisors</span>
               </>
             )}
           </button>

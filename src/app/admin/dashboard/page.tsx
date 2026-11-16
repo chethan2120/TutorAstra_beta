@@ -36,7 +36,7 @@ export default function AdminDashboardPage() {
             Welcome back, Super Admin
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-            Here is an overview of EdNxt Academy operations, educational streams, and admissions today.
+            Here is an overview of TutorAstra operations, learning programs, and student admissions today.
           </p>
         </div>
 

@@ -9,43 +9,67 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        navy: {
-          DEFAULT: '#102B50',
-          dark: '#0B2142',
-          light: '#1e3a63',
-          muted: '#2a4365',
-        },
+        // Strict Two Brand Colours
         brand: {
-          blue: '#2563EB',
-          'blue-light': '#3B82F6',
-          'blue-dark': '#1D4ED8',
-          lime: '#B4E94E',
-          'lime-dark': '#93CA30',
-          'lime-hover': '#A3DC3A',
+          purple: '#310064',       // Deep Purple
+          'purple-dark': '#220046',
+          'purple-light': '#420085',
+          gold: '#F4CC45',         // Brand Gold
+          'gold-light': '#F6D55E',
+          'gold-dark': '#E0B52B',
         },
-        soft: {
-          blue: '#EAF3FF',
-          green: '#EAF8E9',
-          purple: '#F1EAFE',
-          orange: '#FFF0DE',
-          yellow: '#FEF9C3',
+        // Neutral Palette
+        neutral: {
+          50: '#FBFBFC',
+          100: '#F5F5F7',
+          200: '#E5E5EB',
+          300: '#D1D1DB',
+          400: '#8E8E98',
+          500: '#5A5A65',
+          600: '#3E3E48',
+          700: '#2A2A33',
+          800: '#1E1E24',
+          900: '#141418',
         },
-        edbg: '#F8FAFF',
+        charcoal: {
+          DEFAULT: '#1E1E24',
+          muted: '#5A5A65',
+          light: '#8E8E98',
+        },
+        // Backward compatibility mappings
+        navy: {
+          DEFAULT: '#310064',
+          dark: '#220046',
+          light: '#420085',
+          muted: '#5A5A65',
+        },
+        royal: {
+          DEFAULT: '#310064',
+          dark: '#220046',
+          light: '#420085',
+        },
+        gold: {
+          DEFAULT: '#F4CC45',
+          light: '#F6D55E',
+          dark: '#E0B52B',
+        },
       },
       fontFamily: {
-        sans: ['var(--font-plus-jakarta)', 'Inter', 'system-ui', 'sans-serif'],
-      },
-      boxShadow: {
-        soft: '0 4px 20px -2px rgba(16, 43, 80, 0.06), 0 2px 6px -1px rgba(16, 43, 80, 0.04)',
-        'soft-lg': '0 12px 32px -4px rgba(16, 43, 80, 0.08), 0 4px 12px -2px rgba(16, 43, 80, 0.04)',
-        'card-hover': '0 20px 40px -8px rgba(16, 43, 80, 0.12), 0 8px 16px -4px rgba(16, 43, 80, 0.06)',
-        'glow-lime': '0 0 24px -2px rgba(180, 233, 78, 0.45)',
-        'glow-blue': '0 0 24px -2px rgba(37, 99, 235, 0.35)',
+        heading: ['Poppins', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        sans: ['Lato', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        body: ['Lato', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
       borderRadius: {
+        'sm': '0.25rem',
+        'md': '0.375rem',
+        'lg': '0.5rem',
+        'xl': '0.75rem',
         '2xl': '1rem',
-        '3xl': '1.5rem',
-        '4xl': '2rem',
+      },
+      boxShadow: {
+        'subtle': '0 1px 3px 0 rgba(0, 0, 0, 0.04)',
+        'card': '0 2px 8px 0 rgba(49, 0, 100, 0.04)',
+        'card-hover': '0 6px 18px 0 rgba(49, 0, 100, 0.08)',
       },
     },
   },

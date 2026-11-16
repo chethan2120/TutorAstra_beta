@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ednxt.co';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tutorastra.com';
   const currentDate = new Date().toISOString();
 
   const routes = [

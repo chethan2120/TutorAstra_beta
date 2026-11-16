@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { KeyRound, Lock, Mail, ArrowRight, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 
 export default function AdminResetPasswordPage() {
-  const [email, setEmail] = useState('admin@ednxt.co');
+  const [email, setEmail] = useState('admin@tutorastra.com');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);

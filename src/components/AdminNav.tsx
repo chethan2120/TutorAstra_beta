@@ -50,15 +50,15 @@ export function AdminTopBar({ userEmail = 'admin@gmail.com', userName = 'Super A
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-[#F0ECEE] px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4 shadow-xs">
-      {/* Left: EDNXT Medallion Badge & Title */}
+      {/* Left: TutorAstra Medallion Badge & Title */}
       <div className="flex items-center gap-3 shrink-0">
         <Link href="/admin/dashboard" className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full bg-navy flex items-center justify-center text-white shadow-xs">
-            <Award className="w-5 h-5 text-brand-lime" />
+          <div className="w-9 h-9 rounded-full overflow-hidden border border-[#F5D45A]/60 shadow-xs flex items-center justify-center bg-[#270052]">
+            <img src="/tutorastra-logo.jpg" alt="TutorAstra" className="w-full h-full object-cover" />
           </div>
           <div className="hidden sm:block">
-            <span className="text-sm font-black tracking-tight text-navy">EDNXT</span>
-            <span className="text-xs font-semibold text-slate-500 ml-1.5 hidden md:inline">Management Console</span>
+            <span className="text-sm font-black tracking-tight text-royal">TutorAstra</span>
+            <span className="text-xs font-semibold text-purple-700 ml-1.5 hidden md:inline">Management Console</span>
           </div>
         </Link>
       </div>

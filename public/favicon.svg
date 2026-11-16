@@ -1,9 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <rect width="64" height="64" rx="16" fill="#102B50" />
-  <g transform="translate(10, 10)">
-    <path d="M6 34 L20 22 L28 28 L14 40 Z" fill="#60A5FA" opacity="0.9" />
-    <path d="M16 22 L28 10 L36 16 L24 28 Z" fill="#2563EB" />
-    <path d="M26 11 L36 3 L42 8 L32 16 Z" fill="#B4E94E" />
-    <circle cx="38" cy="5" r="3" fill="#B4E94E" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <circle cx="50" cy="50" r="48" fill="#270052" stroke="#F5D45A" stroke-width="3" />
+  <circle cx="50" cy="50" r="43" stroke="#F5D45A" stroke-width="1.2" opacity="0.8" />
+  <g transform="translate(18, 16) scale(0.64)">
+    <!-- Cap -->
+    <polygon points="20,16 50,4 80,16 50,26" fill="url(#goldGrad)" />
+    <path d="M22 22 L22 36 Q22 38 24 38 Q26 38 26 36 L26 22" fill="#F5D45A" />
+    <circle cx="24" cy="38" r="3" fill="#F5D45A" />
+    <!-- T & A Monogram -->
+    <path d="M28 26 C28 22 72 22 72 26 C62 26 58 30 58 40 L58 72 C58 76 54 78 50 78 C46 78 42 76 42 72 L42 40 C42 30 38 26 28 26 Z" fill="url(#goldGrad)" />
+    <path d="M36 78 L50 36 L64 78 L54 78 L50 64 L40 64 L36 78 Z" fill="url(#goldGrad)" />
+    <!-- Swoosh -->
+    <path d="M30 60 Q55 45 82 25 Q70 50 40 64 Z" fill="#FDE68A" opacity="0.9" />
+    <!-- Star Sparkle -->
+    <path d="M82 22 Q83 16 85 15 Q87 16 88 22 Q89 24 94 25 Q89 26 88 28 Q87 34 85 35 Q83 34 82 28 Q77 26 76 25 Q81 24 82 22 Z" fill="#FFF" />
+    <!-- Open Book -->
+    <path d="M20 84 Q50 76 50 88 Q50 76 80 84 Q76 92 50 85 Q24 92 20 84 Z" fill="url(#goldGrad)" />
   </g>
+  <!-- Sparkle inside TA -->
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF3B0" />
+      <stop offset="50%" stop-color="#F5D45A" />
+      <stop offset="100%" stop-color="#D4A017" />
+    </linearGradient>
+  </defs>
 </svg>

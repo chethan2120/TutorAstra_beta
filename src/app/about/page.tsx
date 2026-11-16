@@ -1,140 +1,126 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import ClosingCTA from '@/components/ClosingCTA';
-import WhyUsSection from '@/components/WhyUsSection';
+import WhyTutorAstraSection from '@/components/WhyTutorAstraSection';
 import Link from 'next/link';
-import { Target, Heart, Sparkles, BookOpen, CheckCircle, ShieldCheck, ArrowRight, Award } from 'lucide-react';
+import { Target, ArrowRight, Check } from 'lucide-react';
 
 export const metadata = {
-  title: 'About Us | EdNxt Academy',
-  description: 'Learn about EdNxt’s vision for middle-school education (Grades 6–8): Academic rigor in Science & Maths paired with future-ready AI and Public Speaking.',
+  title: 'About Us | TutorAstra – Your Ambition. Our Mission.',
+  description:
+    'Learn about TutorAstra’s one-to-one educational model: verified subject specialists, tailored study plans, and dedicated academic mentorship.',
 };
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-white text-[#1E1E24]">
       <Navbar />
 
       <main className="flex-grow">
         {/* Header Hero */}
-        <section className="py-16 lg:py-24 bg-gradient-to-b from-white via-soft-blue/20 to-edbg border-b border-slate-200/60">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-soft-blue text-brand-blue text-xs font-bold uppercase tracking-wider">
-              Our Founding Mission
+        <section className="py-16 lg:py-24 bg-[#FBFBFC] border-b border-[#E5E5EB]">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-[#E5E5EB] text-xs font-heading font-semibold text-[#310064] tracking-wide">
+              <span className="w-2 h-2 rounded-full bg-[#F4CC45]" />
+              <span>About TutorAstra</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl font-black text-navy tracking-tight leading-tight">
-              Honest Education for <span className="highlight-lime">Middle Schoolers</span>
+
+            <h1 className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1E1E24] tracking-tight leading-tight">
+              Personalised Mentorship Built for Academic Excellence.
             </h1>
-            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              EdNxt was created around one core belief: Grades 6 to 8 are the most formative intellectual years of a child’s life. What they master today shapes their confidence for tomorrow.
+
+            <p className="text-base sm:text-lg text-[#5A5A65] max-w-2xl mx-auto leading-relaxed">
+              We connect students in Grades 9 through 12 directly with vetted subject specialists for focused, one-to-one learning.
             </p>
           </div>
         </section>
 
-        {/* Why EdNxt Exists Section */}
-        <section className="py-20 bg-white">
+        {/* Core Philosophy Section */}
+        <section className="py-16 lg:py-24 bg-white border-b border-[#E5E5EB]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6">
-                <div className="inline-flex items-center gap-2 text-xs font-bold text-brand-blue uppercase tracking-wider">
-                  <Target className="w-4 h-4" />
-                  <span>The Middle School Dilemma</span>
+              <div className="space-y-5">
+                <div className="inline-flex items-center gap-2 text-xs font-heading font-semibold text-[#310064] uppercase tracking-wider">
+                  <Target className="w-4 h-4 text-[#310064]" />
+                  <span>Educational Mission</span>
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-black text-navy leading-tight">
-                  Bridging Rote Learning and <span className="text-brand-blue">Tomorrow’s Skills</span>
+
+                <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-4xl text-[#1E1E24] leading-tight">
+                  Focusing on the Individual Student.
                 </h2>
-                <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                  Most tuition centers focus exclusively on textbook cramming for tests, neglecting communication and modern technology. Meanwhile, coding bootcamps often teach superficial syntax without strengthening foundational science and mathematics.
-                </p>
-                <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                  <strong className="text-navy font-semibold">EdNxt unites both worlds.</strong> We provide rigorous, syllabus-aligned preparation for CBSE (NCERT) and British Key Stage 3, while equipping students with practical prompt engineering, research synthesis with Gemini Notebooks, and commanding public speaking skills.
+
+                <p className="text-base text-[#5A5A65] leading-relaxed">
+                  Traditional schooling forces groups of thirty students along a single rigid schedule. Doubts often remain unasked, and knowledge gaps grow larger over time.
                 </p>
 
-                <div className="grid grid-cols-2 gap-4 pt-4">
-                  <div className="p-4 rounded-2xl bg-soft-blue/60 border border-blue-100">
-                    <div className="text-2xl font-black text-navy mb-1">Grades 6–8</div>
-                    <div className="text-xs text-slate-600">Tailored exclusively for ages 11–14</div>
+                <p className="text-base text-[#5A5A65] leading-relaxed">
+                  TutorAstra changes this model. By pairing each student with an experienced subject mentor, lessons adapt to their individual rhythm and syllabus requirements.
+                </p>
+
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center gap-2.5 text-sm font-medium text-[#1E1E24]">
+                    <Check className="w-4 h-4 text-[#310064] shrink-0" />
+                    <span>Dedicated one-to-one teaching with real-time doubt resolution</span>
                   </div>
-                  <div className="p-4 rounded-2xl bg-soft-green/60 border border-emerald-100">
-                    <div className="text-2xl font-black text-navy mb-1">4 Streams</div>
-                    <div className="text-xs text-slate-600">Science, Maths, AI & Public Speaking</div>
+                  <div className="flex items-center gap-2.5 text-sm font-medium text-[#1E1E24]">
+                    <Check className="w-4 h-4 text-[#310064] shrink-0" />
+                    <span>Rigorous educator vetting and subject-matter testing</span>
                   </div>
+                  <div className="flex items-center gap-2.5 text-sm font-medium text-[#1E1E24]">
+                    <Check className="w-4 h-4 text-[#310064] shrink-0" />
+                    <span>Curriculum alignment with CBSE, Cambridge, and IB frameworks</span>
+                  </div>
+                </div>
+
+                <div className="pt-4">
+                  <Link href="/#consultation" className="btn-primary text-sm font-heading font-semibold inline-flex">
+                    <span>Book a Free Consultation</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
               </div>
 
-              <div className="relative">
-                <div className="rounded-3xl overflow-hidden shadow-card-hover border-4 border-white">
-                  <img
-                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80"
-                    alt="Students collaborating positively in an educational workspace"
-                    className="w-full h-96 sm:h-[420px] object-cover"
-                  />
+              {/* Right Side Visual / Stats Card */}
+              <div className="card-standard p-8 bg-[#FBFBFC] space-y-6">
+                <h3 className="font-heading font-bold text-xl text-[#1E1E24]">
+                  Key Principles of Our Learning Model
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="p-4 rounded-lg bg-white border border-[#E5E5EB]">
+                    <span className="font-heading font-bold text-sm text-[#310064] block mb-1">
+                      1. Individualised Pacing
+                    </span>
+                    <p className="text-xs text-[#5A5A65] leading-relaxed">
+                      Lessons move as fast or as thoroughly as the student requires, ensuring foundational clarity before advancing.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-lg bg-white border border-[#E5E5EB]">
+                    <span className="font-heading font-bold text-sm text-[#310064] block mb-1">
+                      2. Active Problem Solving
+                    </span>
+                    <p className="text-xs text-[#5A5A65] leading-relaxed">
+                      Students work through problems actively during sessions rather than passively watching video explanations.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-lg bg-white border border-[#E5E5EB]">
+                    <span className="font-heading font-bold text-sm text-[#310064] block mb-1">
+                      3. Transparent Feedback
+                    </span>
+                    <p className="text-xs text-[#5A5A65] leading-relaxed">
+                      Parents receive regular written updates covering concepts mastered, practice scores, and upcoming milestones.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Why Us: Detailed Matrix & 6 Differentiators */}
-        <WhyUsSection />
-
-        {/* Our 4 Core Pillars of Trust */}
-        <section className="py-20 bg-edbg border-y border-slate-200/60">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
-              <h2 className="text-3xl font-black text-navy">Our Guiding Educational Values</h2>
-              <p className="text-sm text-slate-600">
-                As a new brand, our promise to parents is absolute transparency, genuine teaching care, and observable academic growth.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-soft space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-soft-blue text-brand-blue flex items-center justify-center font-bold text-lg">
-                  <ShieldCheck className="w-6 h-6" />
-                </div>
-                <h3 className="text-base font-black text-navy">Honest Messaging</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  We never fabricate years of experience or make unverified claims. We let our structured curriculum, rigorous diagnostics, and trial classes speak for themselves.
-                </p>
-              </div>
-
-              <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-soft space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-soft-green text-emerald-600 flex items-center justify-center font-bold text-lg">
-                  <Heart className="w-6 h-6" />
-                </div>
-                <h3 className="text-base font-black text-navy">Dedicated Care & Small Cohorts</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Every child learns differently. We keep cohorts intimate so teachers know every student by name and track their exact strengths and misconceptions.
-                </p>
-              </div>
-
-              <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-soft space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-soft-purple text-purple-600 flex items-center justify-center font-bold text-lg">
-                  <Sparkles className="w-6 h-6" />
-                </div>
-                <h3 className="text-base font-black text-navy">Future-Ready Relevance</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  AI and public speaking are not afterthoughts or superficial electives. They are built systematically across three terms with capstone showcases.
-                </p>
-              </div>
-
-              <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-soft space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-soft-orange text-amber-700 flex items-center justify-center font-bold text-lg">
-                  <Award className="w-6 h-6" />
-                </div>
-                <h3 className="text-base font-black text-navy">Measured Milestones</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Week 0 diagnostic benchmarks, Week 6 mid-term checkpoints, and Week 12 comprehensive evaluations with written parent consultations.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Closing CTA */}
-        <ClosingCTA />
+        {/* Why TutorAstra Component */}
+        <WhyTutorAstraSection />
       </main>
 
       <Footer />
