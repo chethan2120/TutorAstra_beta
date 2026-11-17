@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getCurrentSession } from '@/lib/auth';
 import { getEnquiryById, updateEnquiryStatus, deleteEnquiry, logActivity } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -14,7 +16,7 @@ export async function GET(
   const id = parseInt(params.id, 10);
   const enquiry = getEnquiryById(id);
   if (!enquiry) {
-    return NextResponse.json({ error: 'Enquiry not found.' }, { status: 404 });
+    return NextResponse.json({ error: 'Enquiry not found.' }, { status: 400 });
   }
 
   return NextResponse.json({ enquiry });

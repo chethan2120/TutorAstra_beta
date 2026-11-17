@@ -10,6 +10,8 @@ import {
 } from '@/lib/db';
 import { sendBrandedEmail } from '@/lib/email';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   const session = getCurrentSession();
   if (!session || session.role !== 'admin') {

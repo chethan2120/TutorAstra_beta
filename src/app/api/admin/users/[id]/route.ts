@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getCurrentSession } from '@/lib/auth';
 import { updateUser, updateUserPassword, getUserById, logActivity, getDb } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const session = getCurrentSession();
   if (!session || session.role !== 'admin') {
@@ -11,7 +13,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   const userId = Number(params.id);
   const targetUser = getUserById(userId);
   if (!targetUser) {
-    return NextResponse.json({ error: 'User not found.' }, { status: 404 });
+    return NextResponse.json({ error: 'User not found.' }, { status: 400 });
   }
 
   try {

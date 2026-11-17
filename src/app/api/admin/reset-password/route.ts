@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getUserByEmail, updateUserPassword, logActivity } from '@/lib/db';
 import { getCurrentSession } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   try {
     const { email, current_password, new_password } = await request.json();
@@ -18,7 +20,7 @@ export async function POST(request: Request) {
     const targetUser = getUserByEmail(email.trim().toLowerCase());
 
     if (!targetUser) {
-      return NextResponse.json({ error: 'User not found.' }, { status: 404 });
+      return NextResponse.json({ error: 'User not found.' }, { status: 400 });
     }
 
     // Update password

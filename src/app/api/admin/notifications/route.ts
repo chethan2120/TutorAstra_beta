@@ -3,6 +3,8 @@ import { getCurrentSession } from '@/lib/auth';
 import { getAllEmailLogs, logActivity, getDb } from '@/lib/db';
 import { sendBrandedEmail } from '@/lib/email';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   const session = getCurrentSession();
   if (!session || session.role !== 'admin') {

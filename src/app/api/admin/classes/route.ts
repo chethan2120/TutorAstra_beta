@@ -9,6 +9,8 @@ import {
 } from '@/lib/db';
 import { sendBrandedEmail } from '@/lib/email';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   const session = getCurrentSession();
   if (!session) {

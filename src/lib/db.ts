@@ -44,7 +44,15 @@ export function getDb(): Database.Database {
   }
 
   dbInstance = new Database(DB_PATH);
-  dbInstance.pragma('journal_mode = WAL');
+  try {
+    dbInstance.pragma('journal_mode = WAL');
+  } catch (e) {
+    try {
+      dbInstance.pragma('journal_mode = DELETE');
+    } catch (e2) {
+      // Ignore pragma failures on restricted serverless runtimes
+    }
+  }
 
   // Initialize Tables only if not already done in this process
   if (!isDbInitialized) {

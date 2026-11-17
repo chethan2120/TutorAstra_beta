@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getCurrentSession } from '@/lib/auth';
 import { getEnrollmentsByStudentId, createEnrollment, logActivity, getStudentById } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   const session = getCurrentSession();
   if (!session) {

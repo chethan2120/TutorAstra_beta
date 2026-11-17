@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getCurrentSession } from '@/lib/auth';
 import { getRecentActivities } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const session = getCurrentSession();
   if (!session || session.role !== 'admin') {

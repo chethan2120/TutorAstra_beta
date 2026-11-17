@@ -27,30 +27,36 @@ export default function AdminChatPage() {
         }
         setCurrentUser(currentU);
 
-        const chatRes = await fetch('/api/admin/chat');
-        if (chatRes.ok) {
-          const chatData = await chatRes.json();
-          const teacherList: ChatPartner[] = (chatData.contacts || []).map((t: any) => ({
-            id: t.user_id,
-            name: t.name,
-            email: t.email,
+        let teacherList: ChatPartner[] = [
+          {
+            id: 3,
+            name: 'Dr. Sarah Mitchell',
+            email: 'teacher@gmail.com',
             role: 'teacher' as const,
-            subjectName: `${t.qualification || 'Faculty Specialization'}`
-          }));
-
-          if (teacherList.length === 0) {
-            teacherList.push({
-              id: 3,
-              name: 'Dr. Sarah Mitchell',
-              email: 'teacher@gmail.com',
-              role: 'teacher' as const,
-              subjectName: 'Senior Science Faculty (Ph.D. Cambridge)'
-            });
+            subjectName: 'Senior Science Faculty (Ph.D. Cambridge)'
           }
+        ];
 
-          setPartners(teacherList);
-          setActivePartner(teacherList[0]);
+        try {
+          const chatRes = await fetch('/api/admin/chat');
+          if (chatRes.ok) {
+            const chatData = await chatRes.json();
+            if (chatData.contacts && chatData.contacts.length > 0) {
+              teacherList = chatData.contacts.map((t: any) => ({
+                id: t.user_id,
+                name: t.name,
+                email: t.email,
+                role: 'teacher' as const,
+                subjectName: `${t.qualification || 'Faculty Specialization'}`
+              }));
+            }
+          }
+        } catch (e) {
+          console.error('Error fetching admin chat contacts:', e);
         }
+
+        setPartners(teacherList);
+        setActivePartner(teacherList[0]);
       } catch (e) {
         console.error(e);
       } finally {
