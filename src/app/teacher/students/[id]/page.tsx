@@ -156,8 +156,8 @@ export default function TeacherSingleStudentPage({ params }: { params: { id: str
         </div>
 
         {/* Sessions Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full text-left text-xs min-w-[620px]">
             <thead>
               <tr className="bg-[#FAF8F5] border-b border-[#ECE6DA] text-[11px] font-heading font-bold text-[#5A5A65] uppercase tracking-wider">
                 <th className="py-2.5 px-3">Session</th>

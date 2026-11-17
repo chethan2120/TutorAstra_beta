@@ -147,8 +147,8 @@ export default function AdminUserManagementPage() {
             No users found matching your search.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-left text-xs min-w-[600px]">
               <thead>
                 <tr className="border-b border-[#ECE6DA] bg-[#FAF8F5] text-[10px] font-heading font-bold text-slate-400 uppercase tracking-wider">
                   <th className="py-3 px-4">User</th>

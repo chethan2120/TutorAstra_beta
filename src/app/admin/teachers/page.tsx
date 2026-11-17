@@ -209,8 +209,8 @@ export default function AdminTeachersPage() {
 
       {/* CREATE TEACHER MODAL (Requirement Stage 3) */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 space-y-4 border border-[#EBE4F6] shadow-2xl animate-in zoom-in-95 duration-150 max-h-[92vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-2xl max-w-xl w-full p-5 sm:p-6 space-y-4 border border-[#EBE4F6] shadow-2xl animate-in zoom-in-95 duration-150 max-h-[90dvh] overflow-y-auto custom-scrollbar">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
                 <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#310064] bg-[#F2ECFC] px-2 py-0.5 rounded">

@@ -320,8 +320,8 @@ export default function AdminCalendarPage() {
 
       {/* Add Free Slot Modal */}
       {showAddSlotModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#ECE6DA] space-y-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#ECE6DA] space-y-4 max-h-[90dvh] overflow-y-auto custom-scrollbar">
             <h3 className="text-base font-heading font-black text-[#310064]">
               Add Free Availability Slot for Teacher
             </h3>

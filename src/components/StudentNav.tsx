@@ -122,57 +122,55 @@ export function StudentTopBar({
       {/* MOBILE DRAWER: Single Frame Layout with High-Positioned Logout */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs lg:hidden flex"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs lg:hidden flex"
           onClick={() => setMobileMenuOpen(false)}
         >
           <div
-            className="w-72 max-w-[85vw] bg-white h-full shadow-2xl flex flex-col justify-between p-4 animate-in slide-in-from-left duration-200"
+            className="w-72 max-w-[85vw] bg-white h-[100dvh] max-h-[100dvh] shadow-2xl flex flex-col p-4 animate-in slide-in-from-left duration-200 text-slate-800"
             onClick={(e) => e.stopPropagation()}
           >
-            <div>
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-[#ECE6DA]">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#310064] text-white flex items-center justify-center font-bold text-xs">
-                    {initials}
-                  </div>
-                  <div>
-                    <div className="text-xs font-heading font-bold text-[#310064]">{userName}</div>
-                    <div className="text-[10px] text-[#5A5A65]">{grade}</div>
-                  </div>
+            {/* Drawer Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-[#ECE6DA] shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-[#310064] text-white flex items-center justify-center font-bold text-xs">
+                  {initials}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <div>
+                  <div className="text-xs font-heading font-bold text-[#310064]">{userName}</div>
+                  <div className="text-[10px] text-[#5A5A65]">{grade}</div>
+                </div>
               </div>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-              {/* Menu Items */}
-              <div className="space-y-1 mt-3 max-h-[60vh] overflow-y-auto pr-1">
-                {studentMenuItems.map((item) => {
-                  const isActive = pathname === item.href || (item.href !== '/student/dashboard' && pathname?.startsWith(item.href + '/'));
-                  const Icon = item.icon;
+            {/* Scrollable Nav Items */}
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar space-y-1 py-3 pr-1">
+              {studentMenuItems.map((item) => {
+                const isActive = pathname === item.href || (item.href !== '/student/dashboard' && pathname?.startsWith(item.href + '/'));
+                const Icon = item.icon;
 
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl font-heading font-bold text-xs transition-all ${
-                        isActive
-                          ? 'bg-[#310064] text-white shadow-xs'
-                          : 'text-[#5A5A65] hover:bg-[#F2ECFC] hover:text-[#310064]'
-                      }`}
-                    >
-                      <Icon className={`w-4 h-4 ${isActive ? 'text-[#F4CC45]' : 'text-slate-400'}`} />
-                      <span>{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl font-heading font-bold text-xs transition-all ${
+                      isActive
+                        ? 'bg-[#310064] text-white shadow-xs'
+                        : 'text-[#5A5A65] hover:bg-[#F2ECFC] hover:text-[#310064]'
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-[#F4CC45]' : 'text-slate-400'}`} />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
             </div>
 
             {/* Logout button positioned conveniently inside the frame */}

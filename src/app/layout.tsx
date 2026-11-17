@@ -1,9 +1,18 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import ScrollAction from '@/components/ScrollAction';
 import AcademicAdvisorChatbot from '@/components/AcademicAdvisorChatbot';
 import FloatingBackgroundElements from '@/components/FloatingBackgroundElements';
 import ScrollAnimations from '@/components/ScrollAnimations';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: '#220046',
+  viewportFit: 'cover'
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://tutorastra.com'),

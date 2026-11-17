@@ -266,8 +266,8 @@ export default function StudentRecordingsPage() {
 
       {/* Confirmation Modal before starting Single-Watch */}
       {confirmModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#ECE6DA] animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#ECE6DA] animate-in fade-in zoom-in duration-200 max-h-[90dvh] overflow-y-auto custom-scrollbar">
             <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center mx-auto mb-4">
               <AlertTriangle className="w-6 h-6" />
             </div>
@@ -312,8 +312,8 @@ export default function StudentRecordingsPage() {
 
       {/* Active Video Player Modal */}
       {activePlayback && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#171746] rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl border border-white/20 flex flex-col">
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-[#171746] rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl border border-white/20 flex flex-col max-h-[96dvh] overflow-y-auto custom-scrollbar">
             {/* Player Top Bar */}
             <div className="p-4 bg-black/40 flex items-center justify-between text-white border-b border-white/10">
               <div className="flex items-center gap-2">

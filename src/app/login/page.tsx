@@ -190,8 +190,8 @@ export default function LoginPage() {
       </div>
 
       {/* RIGHT SIDE: Authentication Form */}
-      <div className="lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-16">
-        <div className="max-w-md w-full bg-white rounded-3xl p-8 sm:p-10 border border-[#ECE5F4] shadow-xl space-y-6">
+      <div className="lg:w-1/2 flex items-center justify-center p-4 sm:p-8 lg:p-16">
+        <div className="max-w-md w-full bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 border border-[#ECE5F4] shadow-xl space-y-5 sm:space-y-6">
           <div>
             <div className="inline-block px-2.5 py-1 rounded-md bg-[#F2ECFC] text-[#310064] text-[11px] font-heading font-bold uppercase tracking-wider mb-2">
               Sign In to Your Account

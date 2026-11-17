@@ -298,8 +298,8 @@ export default function StudentLeavePage() {
             No leave requests recorded. Your attendance record is 100%!
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-left text-xs min-w-[620px]">
               <thead className="bg-[#FAF8F5] text-[#5A5A65] font-heading uppercase text-[10px] tracking-wider border-b border-[#ECE6DA]">
                 <tr>
                   <th className="py-2.5 px-3">Subject / Session</th>

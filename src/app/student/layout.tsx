@@ -16,13 +16,15 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden flex flex-col bg-[#FAF8F5] font-sans text-slate-800">
-      <StudentTopBar userName={session.name} userEmail={session.email} />
-      <div className="flex-1 flex overflow-hidden">
-        <div className="h-full overflow-y-auto shrink-0 hidden lg:block">
+    <div className="h-[100dvh] w-full max-w-[100vw] overflow-hidden flex flex-col bg-[#FAF8F5] font-sans text-slate-800">
+      <div className="shrink-0 z-40">
+        <StudentTopBar userName={session.name} userEmail={session.email} />
+      </div>
+      <div className="flex-1 flex min-h-0 min-w-0 overflow-hidden">
+        <div className="h-full overflow-y-auto shrink-0 hidden lg:block custom-scrollbar">
           <StudentSidebar />
         </div>
-        <main className="flex-1 h-full overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 h-full min-w-0 overflow-y-auto p-3 sm:p-5 lg:p-7 custom-scrollbar">
           {children}
         </main>
       </div>

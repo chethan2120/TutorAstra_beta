@@ -487,8 +487,8 @@ export default function AdminScheduleStudentPage() {
             </button>
           </div>
 
-          <div className="max-h-72 overflow-y-auto border border-[#ECE6DA] rounded-xl custom-scrollbar">
-            <table className="w-full text-left text-xs">
+          <div className="max-h-72 overflow-x-auto overflow-y-auto border border-[#ECE6DA] rounded-xl custom-scrollbar">
+            <table className="w-full text-left text-xs min-w-[480px]">
               <thead className="bg-[#FAF8F5] text-[10px] font-heading font-bold text-slate-400 uppercase tracking-wider sticky top-0 border-b border-[#ECE6DA]">
                 <tr>
                   <th className="py-2.5 px-3">Session</th>
@@ -529,8 +529,8 @@ export default function AdminScheduleStudentPage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full text-left text-xs min-w-[650px]">
             <thead>
               <tr className="border-b border-[#ECE6DA] bg-[#FAF8F5] text-[10px] font-heading font-bold text-slate-400 uppercase tracking-wider">
                 <th className="py-3 px-3">Session</th>

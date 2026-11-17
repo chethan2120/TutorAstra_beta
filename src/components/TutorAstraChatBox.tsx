@@ -259,7 +259,7 @@ export default function TutorAstraChatBox({
   };
 
   return (
-    <div className="bg-[#FFFFFF] rounded-2xl border border-[#ECE6DA] shadow-md overflow-hidden flex flex-col md:flex-row h-full min-h-[460px] max-h-full w-full">
+    <div className="bg-[#FFFFFF] rounded-2xl border border-[#ECE6DA] shadow-md overflow-hidden flex flex-col md:flex-row h-full min-h-0 max-h-full w-full">
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}
@@ -648,7 +648,7 @@ export default function TutorAstraChatBox({
                 placeholder="Type a message"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                className="w-full px-4 py-2.5 text-xs rounded-xl bg-white text-[#111B21] placeholder:text-[#8696A0] focus:outline-hidden border-none shadow-xs"
+                className="w-full px-3.5 py-2.5 text-sm sm:text-xs rounded-xl bg-white text-[#111B21] placeholder:text-[#8696A0] focus:outline-hidden border-none shadow-xs"
               />
             </form>
           )}

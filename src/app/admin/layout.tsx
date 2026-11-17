@@ -19,7 +19,7 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-[#FAF8F5] flex flex-col font-sans text-slate-800">
+    <div className="h-[100dvh] w-full max-w-[100vw] overflow-hidden bg-[#FAF8F5] flex flex-col font-sans text-slate-800">
       {/* Top Header - Fixed / Shrink-0 */}
       <div className="shrink-0 z-40">
         <AdminTopBar userEmail={session.email} userName={session.name} />
@@ -33,7 +33,7 @@ export default function AdminLayout({
         </div>
 
         {/* Main Content Area with its own separate independent scrollbar */}
-        <main className="flex-1 h-full min-w-0 p-4 sm:p-6 lg:p-8 overflow-y-auto custom-scrollbar">
+        <main className="flex-1 h-full min-w-0 p-3 sm:p-5 lg:p-7 overflow-y-auto custom-scrollbar">
           {children}
         </main>
       </div>

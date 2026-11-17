@@ -237,8 +237,8 @@ export default function AdminEnquiriesPage() {
         </div>
       ) : (
         <div className="bg-white rounded-3xl border border-slate-200 shadow-soft overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-left text-xs min-w-[700px]">
               <thead className="bg-slate-50 text-slate-500 border-b border-slate-200 uppercase font-bold text-[10px] tracking-wider">
                 <tr>
                   <th className="py-3.5 px-4">Type</th>

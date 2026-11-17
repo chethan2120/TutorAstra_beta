@@ -474,8 +474,8 @@ export default function TeacherCalendarPage() {
 
       {/* MODAL: ADD FREE HOUR SLOT */}
       {showAddFreeModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-[#ECE6DA] space-y-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#ECE6DA] space-y-4 max-h-[90dvh] overflow-y-auto custom-scrollbar">
             <div className="flex items-center justify-between pb-3 border-b border-[#ECE6DA]">
               <h3 className="font-heading font-extrabold text-base text-[#1E1E24]">
                 Add Free Hour Availability Slot
