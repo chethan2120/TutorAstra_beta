@@ -176,7 +176,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/admin/login" className="text-neutral-400 hover:text-white transition-colors">
+                <Link href="/login" className="text-neutral-400 hover:text-white transition-colors">
                   Educator & Admin Portal →
                 </Link>
               </li>

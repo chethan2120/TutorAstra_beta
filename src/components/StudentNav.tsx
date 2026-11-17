@@ -5,17 +5,17 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
-  Clock,
+  UserCheck,
   BookOpen,
+  CalendarDays,
+  Bell,
   MessageSquare,
   Video,
   CalendarX2,
-  Sparkles,
-  Award,
+  User,
   LogOut,
-  CalendarDays
+  Sparkles
 } from 'lucide-react';
-import BrandLogo from './BrandLogo';
 
 interface StudentNavProps {
   userName?: string;
@@ -74,17 +74,17 @@ export function StudentTopBar({
       {/* Right: Quick Links & Avatar */}
       <div className="flex items-center gap-3">
         <Link
-          href="/student/classes"
+          href="/student/calendar"
           className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FAF8F5] border border-[#ECE6DA] text-xs font-heading font-bold text-[#310064] hover:bg-[#F2ECFC] transition-colors"
         >
-          <Clock className="w-3.5 h-3.5 text-[#F4CC45]" />
-          <span>Today's Classes</span>
+          <CalendarDays className="w-3.5 h-3.5 text-[#F4CC45]" />
+          <span>My Calendar</span>
         </Link>
 
         <button
           type="button"
           onClick={handleLogout}
-          className="w-9 h-9 rounded-full bg-[#310064] text-white flex items-center justify-center font-heading font-bold text-xs shadow-xs hover:opacity-90"
+          className="w-9 h-9 rounded-full bg-[#310064] text-white flex items-center justify-center font-heading font-bold text-xs shadow-xs hover:opacity-90 cursor-pointer"
           title={`Sign out (${userEmail})`}
         >
           {initials}
@@ -108,21 +108,26 @@ export function StudentSidebar() {
     }
   };
 
+  // Strictly configured matching client's exact specification:
+  // "now student: teacher (who is the teacher and which and all subject they handle),
+  // subject, calendar (details on today class), notification, chat, leave, profile, logout"
   const menuItems = [
     { label: 'Dashboard', href: '/student/dashboard', icon: LayoutDashboard },
-    { label: "Today's Classes", href: '/student/classes', icon: Clock },
+    { label: 'My Teachers', href: '/student/teachers', icon: UserCheck },
     { label: 'Enrolled Subjects', href: '/student/subjects', icon: BookOpen },
-    { label: 'Teacher Box', href: '/student/box', icon: MessageSquare },
+    { label: 'Calendar / Today Class', href: '/student/calendar', icon: CalendarDays },
+    { label: 'Notification', href: '/student/notifications', icon: Bell },
+    { label: 'Chat (Teacher Box)', href: '/student/box', icon: MessageSquare },
     { label: 'Class Recordings', href: '/student/recordings', icon: Video },
-    { label: 'Leave Application', href: '/student/leave', icon: CalendarX2 },
+    { label: 'Leave', href: '/student/leave', icon: CalendarX2 },
     { label: 'AI Tutor – Ms. Violet', href: '/student/ai-tutor', icon: Sparkles },
-    { label: 'Assessment History', href: '/student/assessments', icon: Award },
+    { label: 'Profile', href: '/student/profile', icon: User },
   ];
 
   return (
-    <aside className="w-full lg:w-64 bg-white border-r border-[#ECE6DA] flex-shrink-0 flex flex-col justify-between p-3.5 z-30">
+    <aside className="w-full lg:w-64 bg-white border-r border-[#ECE6DA] shrink-0 flex flex-col justify-between p-3.5 z-30 min-h-full">
       <div className="space-y-1">
-        <div className="px-3 py-2 text-[11px] font-heading font-bold uppercase tracking-wider text-[#310064] mb-1">
+        <div className="px-3 py-1.5 text-[10px] font-heading font-black uppercase tracking-wider text-[#310064] mb-1">
           Student Portal
         </div>
         {menuItems.map((item) => {
@@ -145,16 +150,11 @@ export function StudentSidebar() {
         })}
       </div>
 
-      <div className="pt-4 border-t border-[#ECE6DA] space-y-2">
-        <div className="p-3 rounded-xl bg-[#FAF8F5] border border-[#ECE6DA] text-[11px] text-[#5A5A65]">
-          <strong className="block text-[#310064] font-heading font-bold">1-on-1 Assistance</strong>
-          <span>Need help with homework or schedules? Reach out in Teacher Box.</span>
-        </div>
-
+      <div className="pt-4 border-t border-[#ECE6DA] space-y-2 mt-4">
         <button
           type="button"
           onClick={handleLogout}
-          className="w-full text-left px-3.5 py-2 rounded-xl text-xs font-heading font-semibold text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition-colors"
+          className="w-full text-left px-3.5 py-2 rounded-xl text-xs font-heading font-semibold text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition-colors cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
           <span>Sign Out</span>

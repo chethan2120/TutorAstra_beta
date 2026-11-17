@@ -19,11 +19,21 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col font-sans text-slate-800">
-      <AdminTopBar userEmail={session.email} userName={session.name} />
-      <div className="flex-1 flex flex-col lg:flex-row min-w-0">
-        <AdminSidebar userEmail={session.email} userName={session.name} />
-        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+    <div className="h-screen w-screen overflow-hidden bg-[#FAF8F5] flex flex-col font-sans text-slate-800">
+      {/* Top Header - Fixed / Shrink-0 */}
+      <div className="shrink-0 z-40">
+        <AdminTopBar userEmail={session.email} userName={session.name} />
+      </div>
+
+      {/* Main Dual-Scroll Workspace with Independent Scrollbars */}
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0 min-w-0 overflow-hidden">
+        {/* Sidebar Container with its own independent scrollbar */}
+        <div className="h-full shrink-0 overflow-y-auto border-r border-[#ECE6DA] bg-white custom-scrollbar">
+          <AdminSidebar userEmail={session.email} userName={session.name} />
+        </div>
+
+        {/* Main Content Area with its own separate independent scrollbar */}
+        <main className="flex-1 h-full min-w-0 p-4 sm:p-6 lg:p-8 overflow-y-auto custom-scrollbar">
           {children}
         </main>
       </div>

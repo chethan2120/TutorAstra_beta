@@ -317,6 +317,69 @@ function initTables(db: Database.Database) {
       error_message TEXT,
       sent_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS teacher_leaves (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      teacher_id INTEGER NOT NULL,
+      start_date TEXT NOT NULL,
+      end_date TEXT NOT NULL,
+      reason TEXT NOT NULL,
+      cover_teacher_id INTEGER,
+      status TEXT DEFAULT 'approved',
+      admin_notes TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (teacher_id) REFERENCES teacher_profiles(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS portal_notifications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      sender_user_id INTEGER NOT NULL,
+      target_audience TEXT NOT NULL,
+      title TEXT NOT NULL,
+      message TEXT NOT NULL,
+      priority TEXT DEFAULT 'normal',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS teacher_free_hours (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      teacher_id INTEGER NOT NULL,
+      day_of_week INTEGER NOT NULL,
+      start_time TEXT NOT NULL,
+      end_time TEXT NOT NULL,
+      note TEXT DEFAULT 'Available for 1-on-1 & doubt clearing',
+      is_active INTEGER DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (teacher_id) REFERENCES teacher_profiles(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS account_permissions (
+      role TEXT PRIMARY KEY,
+      can_view_recordings INTEGER DEFAULT 1,
+      can_apply_leaves INTEGER DEFAULT 1,
+      can_use_chat INTEGER DEFAULT 1,
+      can_take_ai_test INTEGER DEFAULT 1,
+      can_view_other_contacts INTEGER DEFAULT 0,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS assignments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      teacher_id INTEGER NOT NULL,
+      student_id INTEGER NOT NULL,
+      subject_id INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      description TEXT,
+      due_date TEXT NOT NULL,
+      status TEXT DEFAULT 'assigned',
+      max_marks INTEGER DEFAULT 100,
+      obtained_marks INTEGER,
+      feedback TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (teacher_id) REFERENCES teacher_profiles(id),
+      FOREIGN KEY (student_id) REFERENCES student_profiles(id),
+      FOREIGN KEY (subject_id) REFERENCES subjects(id)
+    );
   `);
 
   // Seed default core users
@@ -682,6 +745,92 @@ function initTables(db: Database.Database) {
           'Class Scheduled: Science Session 05 with Dr. Sarah Mitchell',
           'Your upcoming Science class is scheduled for today at 5:00 PM. Meeting link unlocks 15 minutes before class.'
         );
+        // Seed Teacher Free Hours (Availability)
+        const freeCount = db.prepare('SELECT COUNT(*) as count FROM teacher_free_hours WHERE teacher_id = ?').get(teacherProfile.id) as { count: number };
+        if (freeCount.count === 0) {
+          const insertFree = db.prepare(`
+            INSERT INTO teacher_free_hours (teacher_id, day_of_week, start_time, end_time, note)
+            VALUES (?, ?, ?, ?, ?)
+          `);
+          // Mon to Fri morning & afternoon free slots
+          for (let d = 1; d <= 5; d++) {
+            insertFree.run(teacherProfile.id, d, '09:00', '12:00', 'Morning 1-on-1 Office Hours & Doubt Clearing');
+            insertFree.run(teacherProfile.id, d, '14:00', '16:30', 'Afternoon Pre-Class Preparation Slot');
+          }
+        }
+
+        // Seed Portal Notifications
+        const notifCount = db.prepare('SELECT COUNT(*) as count FROM portal_notifications').get() as { count: number };
+        if (notifCount.count === 0) {
+          const adminUser = db.prepare('SELECT id FROM users WHERE role = "admin"').get() as { id: number } | undefined;
+          const adminId = adminUser?.id || 1;
+          const insertNotif = db.prepare(`
+            INSERT INTO portal_notifications (sender_user_id, target_audience, title, message, priority)
+            VALUES (?, ?, ?, ?, ?)
+          `);
+          insertNotif.run(
+            adminId,
+            'all',
+            'Academic Term 2 Timetable & Curriculum Guidelines',
+            'Welcome to Term 2! All students and teachers are requested to verify their weekly scheduled 1-on-1 timings.',
+            'high'
+          );
+          insertNotif.run(
+            adminId,
+            'students',
+            'Ms. Violet AI Tutor Diagnostic Assessment Window Open',
+            'You can now upload up to 3 pages of study material for diagnostic practice with Ms. Violet.',
+            'normal'
+          );
+          insertNotif.run(
+            adminId,
+            'teachers',
+            'Biometric & Portal Shift Attendance Logging Protocol',
+            'Please ensure punch-in occurs at the start of your teaching shift before live Zoom classes commence.',
+            'normal'
+          );
+        }
+
+        // Seed Default Account Permissions
+        db.prepare(`
+          INSERT OR IGNORE INTO account_permissions (role, can_view_recordings, can_apply_leaves, can_use_chat, can_take_ai_test, can_view_other_contacts)
+          VALUES ('student', 1, 1, 1, 1, 0)
+        `).run();
+        db.prepare(`
+          INSERT OR IGNORE INTO account_permissions (role, can_view_recordings, can_apply_leaves, can_use_chat, can_take_ai_test, can_view_other_contacts)
+          VALUES ('teacher', 1, 1, 1, 1, 1)
+        `).run();
+
+        // Seed Sample Assignments
+        const assignCount = db.prepare('SELECT COUNT(*) as count FROM assignments').get() as { count: number };
+        if (assignCount.count === 0 && teacherProfile && studentProfileId) {
+          const scienceSub = db.prepare('SELECT id FROM subjects WHERE name LIKE "%Science%" OR name LIKE "%Physics%"').get() as { id: number } | undefined;
+          const subId = scienceSub?.id || 1;
+          const insertAssign = db.prepare(`
+            INSERT INTO assignments (teacher_id, student_id, subject_id, title, description, due_date, status, max_marks)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `);
+          insertAssign.run(
+            teacherProfile.id,
+            studentProfileId,
+            subId,
+            'CBSE Grade 10 Light & Optics - Ray Diagram Analysis',
+            'Draw accurate ray diagrams for concave and convex mirrors at varying object positions (C, F, between F and P). Calculate focal length using mirror equation.',
+            '2026-11-20',
+            'assigned',
+            100
+          );
+          insertAssign.run(
+            teacherProfile.id,
+            studentProfileId,
+            subId,
+            'Chemical Reactions & Balanced Equations Practice',
+            'Balance all 15 chemical equations provided in Worksheet 4. Identify redox, displacement, and precipitation reactions.',
+            '2026-11-22',
+            'assigned',
+            50
+          );
+        }
       }
     }
   }
@@ -1972,4 +2121,224 @@ export function updateSettingsBatch(record: Record<string, string>) {
     }
   });
   transaction(Object.entries(record));
+}
+
+// ==========================================
+// NEW MODULES: FREE HOURS, NOTIFICATIONS, TEACHER LEAVES, PERMISSIONS
+// ==========================================
+
+export function getTeacherFreeHours(teacherId?: number) {
+  const db = getDb();
+  let q = `
+    SELECT tfh.*, u.name as teacher_name
+    FROM teacher_free_hours tfh
+    JOIN teacher_profiles tp ON tfh.teacher_id = tp.id
+    JOIN users u ON tp.user_id = u.id
+    WHERE tfh.is_active = 1
+  `;
+  const params: any[] = [];
+  if (teacherId) {
+    q += ' AND tfh.teacher_id = ?';
+    params.push(teacherId);
+  }
+  q += ' ORDER BY tfh.day_of_week ASC, tfh.start_time ASC';
+  return db.prepare(q).all(...params);
+}
+
+export function addTeacherFreeHour(data: { teacher_id: number; day_of_week: number; start_time: string; end_time: string; note?: string }) {
+  const db = getDb();
+  return db.prepare(`
+    INSERT INTO teacher_free_hours (teacher_id, day_of_week, start_time, end_time, note)
+    VALUES (?, ?, ?, ?, ?)
+  `).run(data.teacher_id, data.day_of_week, data.start_time, data.end_time, data.note || 'Available for 1-on-1');
+}
+
+export function deleteTeacherFreeHour(id: number) {
+  const db = getDb();
+  return db.prepare('DELETE FROM teacher_free_hours WHERE id = ?').run(id);
+}
+
+export function getPortalNotifications(role?: string) {
+  const db = getDb();
+  let q = `
+    SELECT pn.*, u.name as sender_name
+    FROM portal_notifications pn
+    JOIN users u ON pn.sender_user_id = u.id
+  `;
+  const params: any[] = [];
+  if (role && role !== 'admin') {
+    q += ' WHERE pn.target_audience = "all" OR pn.target_audience = ?';
+    params.push(role === 'student' ? 'students' : 'teachers');
+  }
+  q += ' ORDER BY pn.created_at DESC';
+  return db.prepare(q).all(...params);
+}
+
+export function createPortalNotification(data: { sender_user_id: number; target_audience: string; title: string; message: string; priority?: string }) {
+  const db = getDb();
+  return db.prepare(`
+    INSERT INTO portal_notifications (sender_user_id, target_audience, title, message, priority)
+    VALUES (?, ?, ?, ?, ?)
+  `).run(data.sender_user_id, data.target_audience, data.title, data.message, data.priority || 'normal');
+}
+
+export function deletePortalNotification(id: number) {
+  const db = getDb();
+  return db.prepare('DELETE FROM portal_notifications WHERE id = ?').run(id);
+}
+
+export function getTeacherLeaves(teacherId?: number) {
+  const db = getDb();
+  let q = `
+    SELECT tl.*, u.name as teacher_name, cu.name as cover_teacher_name
+    FROM teacher_leaves tl
+    JOIN teacher_profiles tp ON tl.teacher_id = tp.id
+    JOIN users u ON tp.user_id = u.id
+    LEFT JOIN teacher_profiles ctp ON tl.cover_teacher_id = ctp.id
+    LEFT JOIN users cu ON ctp.user_id = cu.id
+  `;
+  const params: any[] = [];
+  if (teacherId) {
+    q += ' WHERE tl.teacher_id = ?';
+    params.push(teacherId);
+  }
+  q += ' ORDER BY tl.created_at DESC';
+  return db.prepare(q).all(...params);
+}
+
+export function applyTeacherLeave(data: { teacher_id: number; start_date: string; end_date: string; reason: string; cover_teacher_id?: number }) {
+  const db = getDb();
+  return db.prepare(`
+    INSERT INTO teacher_leaves (teacher_id, start_date, end_date, reason, cover_teacher_id, status)
+    VALUES (?, ?, ?, ?, ?, 'approved')
+  `).run(data.teacher_id, data.start_date, data.end_date, data.reason, data.cover_teacher_id || null);
+}
+
+export function updateTeacherLeaveStatus(id: number, status: string, adminNotes?: string) {
+  const db = getDb();
+  return db.prepare('UPDATE teacher_leaves SET status = ?, admin_notes = ? WHERE id = ?').run(status, adminNotes || '', id);
+}
+
+export function getAccountPermissions(role: string) {
+  const db = getDb();
+  const perm = db.prepare('SELECT * FROM account_permissions WHERE role = ?').get(role);
+  if (!perm) {
+    return {
+      role,
+      can_view_recordings: 1,
+      can_apply_leaves: 1,
+      can_use_chat: 1,
+      can_take_ai_test: 1,
+      can_view_other_contacts: role === 'student' ? 0 : 1
+    };
+  }
+  return perm;
+}
+
+export function updateAccountPermissions(role: string, perms: { can_view_recordings: number; can_apply_leaves: number; can_use_chat: number; can_take_ai_test: number; can_view_other_contacts: number }) {
+  const db = getDb();
+  db.prepare(`
+    INSERT INTO account_permissions (role, can_view_recordings, can_apply_leaves, can_use_chat, can_take_ai_test, can_view_other_contacts, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    ON CONFLICT(role) DO UPDATE SET
+      can_view_recordings = excluded.can_view_recordings,
+      can_apply_leaves = excluded.can_apply_leaves,
+      can_use_chat = excluded.can_use_chat,
+      can_take_ai_test = excluded.can_take_ai_test,
+      can_view_other_contacts = excluded.can_view_other_contacts,
+      updated_at = CURRENT_TIMESTAMP
+  `).run(role, perms.can_view_recordings, perms.can_apply_leaves, perms.can_use_chat, perms.can_take_ai_test, perms.can_view_other_contacts);
+}
+
+export function deleteSubject(id: number) {
+  const db = getDb();
+  return db.prepare('DELETE FROM subjects WHERE id = ?').run(id);
+}
+
+export function getAssignments(filters?: { teacher_id?: number; student_id?: number }) {
+  const db = getDb();
+  let q = `
+    SELECT 
+      a.*,
+      s.name as subject_name,
+      s.code as subject_code,
+      s.color as subject_color,
+      tp.name as teacher_name,
+      sp.name as student_name
+    FROM assignments a
+    JOIN subjects s ON a.subject_id = s.id
+    JOIN teacher_profiles tp ON a.teacher_id = tp.id
+    JOIN student_profiles sp ON a.student_id = sp.id
+  `;
+  const params: any[] = [];
+  const conditions: string[] = [];
+
+  if (filters?.teacher_id) {
+    conditions.push('a.teacher_id = ?');
+    params.push(filters.teacher_id);
+  }
+  if (filters?.student_id) {
+    conditions.push('a.student_id = ?');
+    params.push(filters.student_id);
+  }
+
+  if (conditions.length > 0) {
+    q += ' WHERE ' + conditions.join(' AND ');
+  }
+
+  q += ' ORDER BY a.due_date ASC, a.created_at DESC';
+  return db.prepare(q).all(...params);
+}
+
+export function createAssignment(data: {
+  teacher_id: number;
+  student_id: number;
+  subject_id: number;
+  title: string;
+  description?: string;
+  due_date: string;
+  max_marks?: number;
+}) {
+  const db = getDb();
+  return db.prepare(`
+    INSERT INTO assignments (teacher_id, student_id, subject_id, title, description, due_date, max_marks)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    data.teacher_id,
+    data.student_id,
+    data.subject_id,
+    data.title,
+    data.description || '',
+    data.due_date,
+    data.max_marks || 100
+  );
+}
+
+export function updateAssignment(id: number, data: { status?: string; obtained_marks?: number; feedback?: string }) {
+  const db = getDb();
+  const sets: string[] = [];
+  const params: any[] = [];
+
+  if (data.status !== undefined) {
+    sets.push('status = ?');
+    params.push(data.status);
+  }
+  if (data.obtained_marks !== undefined) {
+    sets.push('obtained_marks = ?');
+    params.push(data.obtained_marks);
+  }
+  if (data.feedback !== undefined) {
+    sets.push('feedback = ?');
+    params.push(data.feedback);
+  }
+
+  if (sets.length === 0) return;
+  params.push(id);
+
+  return db.prepare(`UPDATE assignments SET ${sets.join(', ')} WHERE id = ?`).run(...params);
+}
+
+export function deleteAssignment(id: number) {
+  const db = getDb();
+  return db.prepare('DELETE FROM assignments WHERE id = ?').run(id);
 }

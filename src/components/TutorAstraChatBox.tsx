@@ -15,8 +15,12 @@ import {
   Smile,
   X,
   Loader2,
-  ShieldAlert,
-  AlertCircle
+  Search,
+  MoreVertical,
+  Phone,
+  VideoIcon,
+  Trash2,
+  Check
 } from 'lucide-react';
 
 export interface ChatMessage {
@@ -60,8 +64,10 @@ export default function TutorAstraChatBox({
   const [inputText, setInputText] = useState('');
   const [sending, setSending] = useState(false);
   const [loadingMessages, setLoadingMessages] = useState(true);
+  const [searchContact, setSearchContact] = useState('');
+  const [showAttachMenu, setShowAttachMenu] = useState(false);
 
-  // Simulated Media Attachments
+  // Attachments State
   const [attachedFile, setAttachedFile] = useState<{
     name: string;
     type: 'pdf' | 'image' | 'audio' | 'video';
@@ -73,55 +79,64 @@ export default function TutorAstraChatBox({
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
 
+  // Audio Playback simulation
+  const [playingAudioId, setPlayingAudioId] = useState<number | null>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileInputType, setFileInputType] = useState<'pdf' | 'image' | 'video'>('pdf');
 
-  // Filter partners according to role permission rule:
+  // Filter contacts by role:
   // - Student can ONLY text Teacher (cannot text Admin)
   // - Teacher can text Student AND Admin
   // - Admin can text Teacher
   const permittedPartners = availablePartners.filter((p) => {
-    if (currentRole === 'student') {
-      return p.role === 'teacher';
-    }
-    if (currentRole === 'teacher') {
-      return p.role === 'student' || p.role === 'admin';
-    }
-    if (currentRole === 'admin') {
-      return p.role === 'teacher';
-    }
+    if (currentRole === 'student') return p.role === 'teacher';
+    if (currentRole === 'teacher') return p.role === 'student' || p.role === 'admin';
+    if (currentRole === 'admin') return p.role === 'teacher';
     return true;
   });
 
-  // Load messages whenever activePartner changes
-  useEffect(() => {
-    async function fetchMessages() {
-      if (!activePartner?.id) return;
-      setLoadingMessages(true);
-      try {
-        const endpoint = currentRole === 'teacher'
-          ? `/api/teacher/box?student_user_id=${activePartner.id}`
-          : `/api/student/box`;
+  const filteredPartners = permittedPartners.filter((p) =>
+    p.name.toLowerCase().includes(searchContact.toLowerCase()) ||
+    (p.subjectName || '').toLowerCase().includes(searchContact.toLowerCase())
+  );
 
-        const res = await fetch(endpoint);
-        if (res.ok) {
-          const data = await res.json();
-          setMessages(data.messages || []);
-        }
-      } catch (e) {
-        console.error('Failed to load messages:', e);
-      } finally {
-        setLoadingMessages(false);
+  // Load message history from database
+  const fetchMessages = async () => {
+    if (!activePartner?.id) return;
+    try {
+      let endpoint = '';
+      if (currentRole === 'teacher') {
+        endpoint = `/api/teacher/box?student_user_id=${activePartner.id}`;
+      } else if (currentRole === 'student') {
+        endpoint = `/api/student/box`;
+      } else if (currentRole === 'admin') {
+        endpoint = `/api/admin/chat?partner_user_id=${activePartner.id}`;
       }
+
+      const res = await fetch(endpoint);
+      if (res.ok) {
+        const data = await res.json();
+        setMessages(data.messages || []);
+      }
+    } catch (e) {
+      console.error('Error loading chat:', e);
+    } finally {
+      setLoadingMessages(false);
     }
+  };
+
+  useEffect(() => {
+    setLoadingMessages(true);
     fetchMessages();
   }, [activePartner?.id, currentRole]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, attachedFile]);
 
-  // Voice recording timer simulation
+  // Voice recording ticker
   useEffect(() => {
     let interval: any;
     if (isRecording) {
@@ -141,20 +156,28 @@ export default function TutorAstraChatBox({
   const handleStopRecordingAndAttach = () => {
     setIsRecording(false);
     setAttachedFile({
-      name: `Voice_Note_${new Date().toISOString().substring(11, 19).replace(/:/g, '-')}.mp3`,
+      name: `Voice_Note_${new Date().toLocaleTimeString().replace(/:/g, '-')}.mp3`,
       type: 'audio',
       url: 'https://storage.googleapis.com/tutorastra-voice/voice-note-demo.mp3',
       size: recordingSeconds * 16 * 1024
     });
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, fileType: 'pdf' | 'image' | 'video') => {
+  const handleTriggerFileInput = (type: 'pdf' | 'image' | 'video') => {
+    setFileInputType(type);
+    setShowAttachMenu(false);
+    setTimeout(() => {
+      fileInputRef.current?.click();
+    }, 50);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setAttachedFile({
       name: file.name,
-      type: fileType,
+      type: fileInputType,
       url: URL.createObjectURL(file),
       size: file.size
     });
@@ -165,7 +188,8 @@ export default function TutorAstraChatBox({
     if (!inputText.trim() && !attachedFile) return;
 
     setSending(true);
-    const newMsgPayload = {
+
+    const payload = {
       receiver_user_id: activePartner.id,
       message: inputText.trim(),
       attachment_name: attachedFile?.name,
@@ -174,272 +198,340 @@ export default function TutorAstraChatBox({
       attachment_size: attachedFile?.size
     };
 
-    try {
-      const endpoint = currentRole === 'teacher' ? '/api/teacher/box' : '/api/student/box';
-      const body = currentRole === 'teacher'
-        ? { studentUserId: activePartner.id, ...newMsgPayload }
-        : { teacherUserId: activePartner.id, ...newMsgPayload };
+    // Optimistic UI update
+    const optimisticMessage: ChatMessage = {
+      id: Date.now(),
+      sender_user_id: currentUserId,
+      receiver_user_id: activePartner.id,
+      message: inputText.trim(),
+      attachment_name: attachedFile?.name,
+      attachment_url: attachedFile?.url,
+      attachment_type: attachedFile?.type,
+      attachment_size: attachedFile?.size,
+      is_read: 0,
+      created_at: new Date().toISOString()
+    };
 
-      const res = await fetch(endpoint, {
+    setMessages((prev) => [...prev, optimisticMessage]);
+    setInputText('');
+    setAttachedFile(null);
+
+    try {
+      let endpoint = '';
+      let body: any = {};
+
+      if (currentRole === 'teacher') {
+        endpoint = '/api/teacher/box';
+        body = { studentUserId: activePartner.id, ...payload };
+      } else if (currentRole === 'student') {
+        endpoint = '/api/student/box';
+        body = { teacherUserId: activePartner.id, ...payload };
+      } else if (currentRole === 'admin') {
+        endpoint = '/api/admin/chat';
+        body = { partnerUserId: activePartner.id, ...payload };
+      }
+
+      await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
 
-      if (res.ok) {
-        // Optimistic append
-        const newMsg: ChatMessage = {
-          id: Date.now(),
-          sender_user_id: currentUserId,
-          receiver_user_id: activePartner.id,
-          message: inputText.trim(),
-          attachment_name: attachedFile?.name,
-          attachment_url: attachedFile?.url,
-          attachment_type: attachedFile?.type,
-          attachment_size: attachedFile?.size,
-          created_at: new Date().toISOString()
-        };
-        setMessages((prev) => [...prev, newMsg]);
-        setInputText('');
-        setAttachedFile(null);
-      }
-    } catch (err) {
-      console.error('Failed to deliver message:', err);
+      // Refetch to ensure synced DB IDs
+      fetchMessages();
+    } catch (e) {
+      console.error('Failed to send message:', e);
     } finally {
       setSending(false);
     }
   };
 
-  const sendQuickDoubt = (text: string) => {
-    setInputText(text);
+  const formatTime = (isoString?: string) => {
+    if (!isoString) return '';
+    try {
+      const d = new Date(isoString);
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return '';
+    }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-[680px] bg-white rounded-2xl border border-[#EBE4F6] shadow-sm overflow-hidden">
-      {/* LEFT COLUMN: Conversation Threads / Contact List */}
-      <div className="w-full lg:w-72 bg-[#FAF8F5] border-r border-[#ECE6DA] flex flex-col justify-between shrink-0">
-        <div className="p-4 border-b border-[#ECE6DA] bg-white">
-          <div className="font-heading font-bold text-xs uppercase tracking-wider text-[#310064] mb-1">
-            {currentRole === 'student' ? 'Assigned Faculty' : 'Academic Channels'}
-          </div>
-          <div className="text-[11px] text-[#5A5A65]">
-            {currentRole === 'student'
-              ? 'Direct line to your dedicated subject tutors.'
-              : 'Direct communication with students and admin.'}
-          </div>
-        </div>
+    <div className="bg-[#FFFFFF] rounded-2xl border border-[#ECE6DA] shadow-lg overflow-hidden flex flex-col md:flex-row h-[720px] max-w-6xl mx-auto w-full">
+      {/* Hidden File Input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        className="hidden"
+        accept={
+          fileInputType === 'pdf'
+            ? '.pdf,application/pdf'
+            : fileInputType === 'image'
+            ? 'image/*'
+            : 'video/*'
+        }
+        onChange={handleFileChange}
+      />
 
-        {/* Channels List */}
-        <div className="flex-1 overflow-y-auto divide-y divide-[#ECE6DA]/60">
-          {permittedPartners.map((p) => {
-            const isSelected = p.id === activePartner.id;
-            return (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => onSelectPartner(p)}
-                className={`w-full p-3.5 text-left flex items-start gap-3 transition-colors ${
-                  isSelected ? 'bg-white border-l-4 border-[#310064] shadow-xs' : 'hover:bg-white/60'
-                }`}
-              >
-                <div className="w-9 h-9 rounded-xl bg-[#F2ECFC] text-[#310064] font-heading font-bold text-xs flex items-center justify-center shrink-0 border border-[#E0D3F5]">
-                  {p.name.substring(0, 2).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <span className="font-heading font-bold text-xs text-[#1E1E24] truncate">
-                      {p.name}
-                    </span>
-                    <span className="text-[9px] font-bold px-1.5 py-0.2 rounded uppercase bg-[#F2ECFC] text-[#310064]">
-                      {p.role}
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-[#5A5A65] truncate mt-0.5">
-                    {p.subjectName || (p.role === 'teacher' ? 'Lead Faculty' : p.role === 'admin' ? 'Administration' : 'Student')}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
-
-          {permittedPartners.length === 0 && (
-            <div className="p-6 text-center text-xs text-[#5A5A65]">
-              No direct communication channels active.
+      {/* ======================================================== */}
+      {/* LEFT PANEL: WHATSAPP-STYLE CONTACTS LIST */}
+      {/* ======================================================== */}
+      <div className="w-full md:w-80 lg:w-96 border-r border-[#ECE6DA] flex flex-col bg-[#FFFFFF] shrink-0">
+        {/* Left Header */}
+        <div className="bg-[#F0F2F5] px-4 py-3 flex items-center justify-between border-b border-[#E9EDEF]">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[#310064] text-[#F4CC45] flex items-center justify-center font-heading font-black text-sm shadow-xs">
+              {currentRole === 'admin' ? 'AD' : currentRole === 'teacher' ? 'TC' : 'ST'}
             </div>
-          )}
+            <div>
+              <div className="font-heading font-black text-xs text-[#111B21]">
+                {currentRole === 'admin'
+                  ? 'Admin Workspace'
+                  : currentRole === 'teacher'
+                  ? 'Teacher Box'
+                  : 'Student Doubt Box'}
+              </div>
+              <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Online
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* Role permission info banner */}
-        <div className="p-3 bg-white border-t border-[#ECE6DA] text-[10px] text-[#5A5A65] flex items-center gap-1.5">
-          <ShieldAlert className="w-3.5 h-3.5 text-[#310064] shrink-0" />
-          <span>
-            {currentRole === 'student'
-              ? 'Student messages reach your assigned teacher only.'
-              : 'End-to-end institutional academic logging.'}
-          </span>
+        {/* Search Bar */}
+        <div className="p-2.5 bg-[#FFFFFF] border-b border-[#F0F2F5]">
+          <div className="relative">
+            <Search className="w-4 h-4 text-[#54656F] absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search or start new chat"
+              value={searchContact}
+              onChange={(e) => setSearchContact(e.target.value)}
+              className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg bg-[#F0F2F5] text-[#111B21] placeholder:text-[#8696A0] focus:outline-hidden focus:bg-[#FFFFFF] focus:ring-1 focus:ring-emerald-500"
+            />
+          </div>
+        </div>
+
+        {/* Contact Threads List */}
+        <div className="flex-1 overflow-y-auto divide-y divide-[#F0F2F5] custom-scrollbar">
+          {filteredPartners.length === 0 ? (
+            <div className="p-8 text-center text-xs text-[#8696A0]">
+              No contacts found.
+            </div>
+          ) : (
+            filteredPartners.map((partner) => {
+              const isActive = activePartner?.id === partner.id;
+              const initials = partner.name
+                .split(' ')
+                .map((n) => n[0])
+                .join('')
+                .substring(0, 2)
+                .toUpperCase() || 'TA';
+
+              return (
+                <button
+                  key={partner.id}
+                  type="button"
+                  onClick={() => onSelectPartner(partner)}
+                  className={`w-full p-3 flex items-center gap-3 text-left transition-colors cursor-pointer ${
+                    isActive ? 'bg-[#F0F2F5]' : 'hover:bg-[#F5F6F6] bg-white'
+                  }`}
+                >
+                  <div className="w-11 h-11 rounded-full bg-[#E9EDEF] border border-[#ECE6DA] text-[#310064] flex items-center justify-center font-heading font-black text-xs shrink-0 shadow-xs">
+                    {initials}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <span className="font-heading font-bold text-xs text-[#111B21] truncate">
+                        {partner.name}
+                      </span>
+                      <span className="text-[10px] text-[#667781] shrink-0">
+                        Today
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-0.5">
+                      <p className="text-[11px] text-[#667781] truncate">
+                        {partner.subjectName || `${partner.role.toUpperCase()} • TutorAstra`}
+                      </p>
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 ml-1.5" />
+                    </div>
+                  </div>
+                </button>
+              );
+            })
+          )}
         </div>
       </div>
 
-      {/* RIGHT COLUMN: Active Chat Thread Canvas */}
-      <div className="flex-1 flex flex-col justify-between bg-white h-full min-w-0">
-        {/* Chat Thread Header */}
-        <div className="p-4 border-b border-[#ECE6DA] flex items-center justify-between bg-[#FFFDF8]">
+      {/* ======================================================== */}
+      {/* RIGHT PANEL: WHATSAPP-STYLE ACTIVE CHAT SCREEN */}
+      {/* ======================================================== */}
+      <div className="flex-1 flex flex-col bg-[#EFEAE2] min-w-0">
+        {/* Right Active Header */}
+        <div className="bg-[#F0F2F5] px-4 py-2.5 flex items-center justify-between border-b border-[#E9EDEF] shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#310064] text-white font-heading font-bold text-xs flex items-center justify-center shadow-xs">
-              {activePartner.name.substring(0, 2).toUpperCase()}
+            <div className="w-10 h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center font-heading font-black text-xs shadow-xs">
+              {activePartner?.name
+                .split(' ')
+                .map((n) => n[0])
+                .join('')
+                .substring(0, 2)
+                .toUpperCase() || 'TA'}
             </div>
             <div>
-              <h3 className="font-heading font-bold text-sm text-[#1E1E24]">
-                {activePartner.name}
+              <h3 className="font-heading font-bold text-sm text-[#111B21]">
+                {activePartner?.name}
               </h3>
-              <div className="flex items-center gap-2 text-[11px] text-[#5A5A65]">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Connected • {activePartner.subjectName || activePartner.role.toUpperCase()}</span>
-              </div>
+              <p className="text-[11px] text-emerald-600 font-medium">
+                Online • {activePartner?.subjectName || `${activePartner?.role} Account`}
+              </p>
             </div>
           </div>
 
-          <div className="text-right">
-            <span className="text-[10px] font-heading font-semibold text-[#310064] bg-[#F2ECFC] px-2 py-1 rounded-md border border-[#E0D3F5]">
-              {currentRole === 'student' ? '1-on-1 Doubt Clearing' : 'Academic Channel'}
+          <div className="flex items-center gap-4 text-[#54656F]">
+            <span className="text-[11px] font-bold text-[#310064] bg-[#F2ECFC] px-2.5 py-0.5 rounded-full">
+              Permanent Cloud Sync
             </span>
           </div>
         </div>
 
-        {/* Messages Stream */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-[#FAF8F5]/30">
+        {/* Message Thread Body with WhatsApp Wallpaper Pattern */}
+        <div
+          className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 custom-scrollbar"
+          style={{
+            backgroundColor: '#EFEAE2',
+            backgroundImage: `radial-gradient(#00000008 1px, transparent 1px)`,
+            backgroundSize: '16px 16px'
+          }}
+        >
+          {/* Top Date Separator */}
+          <div className="text-center my-2">
+            <span className="px-3 py-1 rounded-lg bg-white/80 backdrop-blur-xs text-[10px] font-bold uppercase tracking-wider text-[#54656F] shadow-xs">
+              TODAY
+            </span>
+          </div>
+
           {loadingMessages ? (
-            <div className="flex items-center justify-center h-full text-xs text-[#5A5A65]">
-              <Loader2 className="w-5 h-5 animate-spin mr-2 text-[#310064]" />
-              <span>Syncing conversation...</span>
+            <div className="p-12 text-center text-xs text-[#54656F]">
+              <Loader2 className="w-6 h-6 animate-spin mx-auto text-[#25D366] mb-2" />
+              <span>Loading saved chat history...</span>
             </div>
           ) : messages.length === 0 ? (
-            <div className="text-center py-16 space-y-2">
-              <div className="w-12 h-12 rounded-full bg-[#F2ECFC] text-[#310064] flex items-center justify-center mx-auto">
-                <FileText className="w-6 h-6" />
-              </div>
-              <h4 className="font-heading font-bold text-sm text-[#1E1E24]">
-                Start the conversation
-              </h4>
-              <p className="text-xs text-[#5A5A65] max-w-sm mx-auto">
-                {currentRole === 'student'
-                  ? 'Ask any doubt from your school syllabus, attach written homework, or record a voice question for your tutor.'
-                  : 'Send worksheets, lecture feedback, or answers to your student.'}
+            <div className="p-12 text-center text-xs text-[#54656F] max-w-sm mx-auto bg-white/70 backdrop-blur-xs rounded-2xl shadow-xs">
+              <CheckCheck className="w-8 h-8 text-[#25D366] mx-auto mb-2" />
+              <strong className="block text-[#111B21] font-heading font-bold">
+                End-to-End Saved Conversation
+              </strong>
+              <p className="mt-1">
+                Ask your doubts, share homework files, or record voice memos. All messages are securely saved and will remain here.
               </p>
             </div>
           ) : (
-            messages.map((m) => {
-              const isMe = m.sender_user_id === currentUserId;
+            messages.map((msg) => {
+              const isMine = msg.sender_user_id === currentUserId;
+
               return (
                 <div
-                  key={m.id}
-                  className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}
+                  key={msg.id}
+                  className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[85%] sm:max-w-md rounded-2xl p-3.5 text-xs shadow-xs space-y-2 ${
-                      isMe
-                        ? 'bg-[#310064] text-white rounded-br-none'
-                        : 'bg-white text-[#1E1E24] border border-[#ECE6DA] rounded-bl-none'
+                    className={`max-w-[85%] sm:max-w-md rounded-2xl px-3.5 py-2 shadow-xs text-xs relative ${
+                      isMine
+                        ? 'bg-[#D9FDD3] text-[#111B21] rounded-tr-none'
+                        : 'bg-white text-[#111B21] rounded-tl-none'
                     }`}
                   >
-                    {/* Text Message Content */}
-                    {m.message && (
-                      <p className="leading-relaxed whitespace-pre-wrap">{m.message}</p>
-                    )}
-
-                    {/* PDF Attachment Card */}
-                    {m.attachment_name && m.attachment_type === 'pdf' && (
-                      <div
-                        className={`p-2.5 rounded-xl flex items-center justify-between gap-3 ${
-                          isMe ? 'bg-white/15 border border-white/20' : 'bg-[#FAF8F5] border border-[#ECE6DA]'
-                        }`}
-                      >
+                    {/* Media Attachments */}
+                    {msg.attachment_type === 'pdf' && (
+                      <div className="mb-2 p-2.5 rounded-xl bg-black/5 flex items-center justify-between gap-3 border border-black/5">
                         <div className="flex items-center gap-2 min-w-0">
-                          <FileText className="w-5 h-5 text-[#F4CC45] shrink-0" />
-                          <div className="truncate">
-                            <span className="block font-heading font-bold truncate">
-                              {m.attachment_name}
+                          <div className="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center shrink-0">
+                            <FileText className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="font-bold text-[11px] truncate block text-[#111B21]">
+                              {msg.attachment_name || 'Homework_Document.pdf'}
                             </span>
-                            <span className="text-[10px] opacity-75">PDF Document</span>
+                            <span className="text-[10px] text-[#667781]">
+                              {msg.attachment_size ? `${Math.round(msg.attachment_size / 1024)} KB` : 'PDF Document'}
+                            </span>
                           </div>
                         </div>
                         <a
-                          href={m.attachment_url || '#'}
-                          download={m.attachment_name}
+                          href={msg.attachment_url || '#'}
                           target="_blank"
-                          rel="noreferrer"
-                          className={`p-1.5 rounded-lg shrink-0 ${
-                            isMe ? 'bg-white/20 hover:bg-white/30 text-white' : 'bg-white text-[#310064] hover:bg-[#F2ECFC]'
-                          }`}
+                          rel="noopener noreferrer"
+                          className="p-1.5 rounded-full bg-white hover:bg-slate-100 text-[#111B21] shadow-xs"
+                          title="Download"
                         >
                           <Download className="w-3.5 h-3.5" />
                         </a>
                       </div>
                     )}
 
-                    {/* Image Attachment Thumbnail */}
-                    {m.attachment_name && m.attachment_type === 'image' && (
-                      <div className="rounded-xl overflow-hidden border border-black/10">
+                    {msg.attachment_type === 'image' && (
+                      <div className="mb-2 rounded-xl overflow-hidden border border-black/5">
                         <img
-                          src={m.attachment_url || '/contact-reference.jpg'}
-                          alt={m.attachment_name}
-                          className="max-h-56 w-full object-cover rounded-lg"
+                          src={msg.attachment_url || '/hero-one-on-one.jpg'}
+                          alt={msg.attachment_name || 'Shared Image'}
+                          className="w-full max-h-60 object-cover rounded-xl"
                         />
-                        <div className="p-1 text-[10px] opacity-80 truncate">{m.attachment_name}</div>
                       </div>
                     )}
 
-                    {/* Voice Recording Note Pill */}
-                    {m.attachment_type === 'audio' && (
-                      <div
-                        className={`p-2 rounded-xl flex items-center gap-2.5 ${
-                          isMe ? 'bg-white/15' : 'bg-[#F2ECFC] text-[#310064]'
-                        }`}
-                      >
+                    {msg.attachment_type === 'audio' && (
+                      <div className="mb-2 p-2.5 rounded-xl bg-black/5 flex items-center gap-3 min-w-[220px]">
                         <button
                           type="button"
-                          className="w-7 h-7 rounded-full bg-[#F4CC45] text-[#220046] flex items-center justify-center shrink-0"
+                          onClick={() => setPlayingAudioId(playingAudioId === msg.id ? null : msg.id)}
+                          className="w-9 h-9 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-xs cursor-pointer"
                         >
-                          <Play className="w-3.5 h-3.5 ml-0.5 fill-[#220046]" />
+                          {playingAudioId === msg.id ? (
+                            <Pause className="w-4 h-4 fill-white" />
+                          ) : (
+                            <Play className="w-4 h-4 fill-white ml-0.5" />
+                          )}
                         </button>
                         <div className="flex-1">
-                          <div className="h-1.5 bg-black/20 rounded-full w-full overflow-hidden">
-                            <div className="h-full bg-[#F4CC45] w-2/3" />
+                          <div className="h-1.5 bg-[#667781]/30 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-[#25D366] rounded-full transition-all duration-300"
+                              style={{ width: playingAudioId === msg.id ? '75%' : '0%' }}
+                            />
                           </div>
-                          <span className="text-[9px] mt-0.5 block opacity-75">
-                            Voice Note ({m.attachment_name || '0:18'})
-                          </span>
+                          <div className="flex items-center justify-between text-[10px] text-[#667781] mt-1">
+                            <span>{msg.attachment_name || 'Voice Note'}</span>
+                            <span>{playingAudioId === msg.id ? '0:14' : '0:24'}</span>
+                          </div>
                         </div>
                       </div>
                     )}
 
-                    {/* Video Attachment Pill */}
-                    {m.attachment_type === 'video' && (
-                      <div
-                        className={`p-2 rounded-xl flex items-center gap-2.5 ${
-                          isMe ? 'bg-white/15' : 'bg-slate-100 text-[#1E1E24]'
-                        }`}
-                      >
-                        <Video className="w-4 h-4 text-[#F4CC45]" />
-                        <span className="text-[11px] font-semibold truncate flex-1">
-                          {m.attachment_name || 'Class_Recording_Clip.mp4'}
-                        </span>
-                        <a
-                          href={m.attachment_url || '#'}
-                          className="text-[10px] font-bold text-[#F4CC45] hover:underline"
-                        >
-                          Play Video →
-                        </a>
+                    {msg.attachment_type === 'video' && (
+                      <div className="mb-2 rounded-xl overflow-hidden bg-black aspect-video flex items-center justify-center">
+                        <Video className="w-8 h-8 text-white/70" />
                       </div>
                     )}
-                  </div>
 
-                  <span className="text-[9px] text-[#5A5A65] mt-1 px-1 flex items-center gap-1">
-                    <span>
-                      {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                    {isMe && <CheckCheck className="w-3 h-3 text-[#310064]" />}
-                  </span>
+                    {/* Text Message */}
+                    {msg.message && (
+                      <p className="leading-relaxed whitespace-pre-wrap break-words pr-12">
+                        {msg.message}
+                      </p>
+                    )}
+
+                    {/* Timestamp & Double Blue Tick */}
+                    <div className="flex items-center justify-end gap-1 text-[10px] text-[#667781] mt-1 float-right -mb-1 ml-2">
+                      <span>{formatTime(msg.created_at)}</span>
+                      {isMine && (
+                        <CheckCheck className="w-3.5 h-3.5 text-[#53BDEB]" />
+                      )}
+                    </div>
+                  </div>
                 </div>
               );
             })
@@ -447,152 +539,129 @@ export default function TutorAstraChatBox({
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Quick Question / Doubt Chips for Students */}
-        {currentRole === 'student' && (
-          <div className="px-4 py-2 border-t border-[#ECE6DA] bg-[#FFFDF8] flex items-center gap-1.5 overflow-x-auto text-[11px]">
-            <span className="text-[#310064] font-bold shrink-0">Quick Doubt:</span>
-            <button
-              type="button"
-              onClick={() => sendQuickDoubt('Could you explain step 2 of today\'s derivation?')}
-              className="px-2.5 py-1 rounded-full bg-white border border-[#E0D3F5] text-[#310064] hover:bg-[#F2ECFC] whitespace-nowrap"
-            >
-              Explain derivation step 2
-            </button>
-            <button
-              type="button"
-              onClick={() => sendQuickDoubt('I have attached my homework worksheet for review.')}
-              className="px-2.5 py-1 rounded-full bg-white border border-[#E0D3F5] text-[#310064] hover:bg-[#F2ECFC] whitespace-nowrap"
-            >
-              Submitted written homework
-            </button>
-            <button
-              type="button"
-              onClick={() => sendQuickDoubt('When is our next live 1-on-1 session?')}
-              className="px-2.5 py-1 rounded-full bg-white border border-[#E0D3F5] text-[#310064] hover:bg-[#F2ECFC] whitespace-nowrap"
-            >
-              Next class timing
-            </button>
-          </div>
-        )}
-
-        {/* Active Attachment Preview Bar */}
+        {/* Attachment Preview Banner before send */}
         {attachedFile && (
-          <div className="px-4 py-2 bg-[#F2ECFC] border-t border-[#E0D3F5] flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2 text-[#310064] font-medium truncate">
-              {attachedFile.type === 'pdf' && <FileText className="w-4 h-4 text-[#310064]" />}
-              {attachedFile.type === 'image' && <ImageIcon className="w-4 h-4 text-[#310064]" />}
-              {attachedFile.type === 'audio' && <Mic className="w-4 h-4 text-[#310064]" />}
-              {attachedFile.type === 'video' && <Video className="w-4 h-4 text-[#310064]" />}
-              <span className="font-heading font-bold truncate">{attachedFile.name}</span>
+          <div className="p-3 bg-[#F0F2F5] border-t border-[#E9EDEF] flex items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-[#111B21]">Attached:</span>
+              <span className="text-[#54656F] truncate max-w-xs">{attachedFile.name}</span>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold uppercase">
+                {attachedFile.type}
+              </span>
             </div>
             <button
               type="button"
               onClick={() => setAttachedFile(null)}
-              className="text-slate-400 hover:text-rose-600 p-1"
+              className="text-rose-500 hover:text-rose-700 p-1"
+              title="Remove attachment"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         )}
 
-        {/* Live Voice Recording Status */}
-        {isRecording && (
-          <div className="px-4 py-2.5 bg-rose-50 border-t border-rose-200 flex items-center justify-between text-xs text-rose-700 animate-pulse">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-600" />
-              <span>Recording Voice Note... ({recordingSeconds}s)</span>
+        {/* ======================================================== */}
+        {/* BOTTOM INPUT BAR: WHATSAPP-STYLE */}
+        {/* ======================================================== */}
+        <div className="bg-[#F0F2F5] p-3 border-t border-[#E9EDEF] flex items-center gap-2 shrink-0 relative">
+          {/* Attachment Popup Menu */}
+          {showAttachMenu && (
+            <div className="absolute bottom-16 left-12 bg-white rounded-2xl shadow-xl border border-[#ECE6DA] p-2 space-y-1 z-30 animate-in fade-in zoom-in-95 duration-150">
+              <button
+                type="button"
+                onClick={() => handleTriggerFileInput('pdf')}
+                className="w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold text-[#111B21] hover:bg-[#F0F2F5] rounded-xl text-left"
+              >
+                <div className="w-7 h-7 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <span>Document (PDF)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleTriggerFileInput('image')}
+                className="w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold text-[#111B21] hover:bg-[#F0F2F5] rounded-xl text-left"
+              >
+                <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                  <ImageIcon className="w-4 h-4" />
+                </div>
+                <span>Photos & Notes</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleTriggerFileInput('video')}
+                className="w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold text-[#111B21] hover:bg-[#F0F2F5] rounded-xl text-left"
+              >
+                <div className="w-7 h-7 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
+                  <Video className="w-4 h-4" />
+                </div>
+                <span>Video Clip</span>
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={handleStopRecordingAndAttach}
-              className="px-3 py-1 rounded-lg bg-rose-600 text-white font-heading font-bold text-xs"
-            >
-              Attach Audio Note
-            </button>
-          </div>
-        )}
+          )}
 
-        {/* Chat Input Bar */}
-        <form onSubmit={handleSendMessage} className="p-3.5 border-t border-[#ECE6DA] bg-white flex items-center gap-2">
-          {/* Attachment Action Buttons */}
-          <div className="flex items-center gap-1 shrink-0 text-[#5A5A65]">
-            {/* PDF Attachment Button */}
-            <label
-              className="w-8 h-8 rounded-lg hover:bg-[#F2ECFC] hover:text-[#310064] flex items-center justify-center cursor-pointer transition-colors"
-              title="Attach PDF worksheet or document"
-            >
-              <FileText className="w-4 h-4" />
-              <input
-                type="file"
-                accept=".pdf"
-                className="hidden"
-                onChange={(e) => handleFileSelect(e, 'pdf')}
-              />
-            </label>
-
-            {/* Image Attachment Button */}
-            <label
-              className="w-8 h-8 rounded-lg hover:bg-[#F2ECFC] hover:text-[#310064] flex items-center justify-center cursor-pointer transition-colors"
-              title="Attach Image or photo of written work"
-            >
-              <ImageIcon className="w-4 h-4" />
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => handleFileSelect(e, 'image')}
-              />
-            </label>
-
-            {/* Video Attachment Button */}
-            <label
-              className="w-8 h-8 rounded-lg hover:bg-[#F2ECFC] hover:text-[#310064] flex items-center justify-center cursor-pointer transition-colors"
-              title="Share Video file"
-            >
-              <Video className="w-4 h-4" />
-              <input
-                type="file"
-                accept="video/*"
-                className="hidden"
-                onChange={(e) => handleFileSelect(e, 'video')}
-              />
-            </label>
-
-            {/* Voice Recording Button */}
-            <button
-              type="button"
-              onClick={isRecording ? handleStopRecordingAndAttach : handleStartRecording}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                isRecording ? 'bg-rose-600 text-white' : 'hover:bg-[#F2ECFC] hover:text-[#310064]'
-              }`}
-              title="Record voice note"
-            >
-              <Mic className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Text Input */}
-          <input
-            type="text"
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder={`Message ${activePartner.name}...`}
-            className="flex-1 p-2.5 rounded-xl border border-[#E5E5EB] text-xs text-[#1E1E24] focus:outline-none focus:border-[#310064] transition-colors"
-          />
-
-          {/* Send Button */}
+          {/* Attachment Paperclip Button */}
           <button
-            type="submit"
-            disabled={sending || (!inputText.trim() && !attachedFile)}
-            className="p-2.5 rounded-xl bg-[#310064] hover:bg-[#430080] text-white disabled:opacity-50 transition-all shrink-0"
+            type="button"
+            onClick={() => setShowAttachMenu(!showAttachMenu)}
+            className="p-2 text-[#54656F] hover:text-[#111B21] hover:bg-[#E9EDEF] rounded-full transition-colors cursor-pointer"
+            title="Attach Document, Photo or Video"
           >
-            {sending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4 text-[#F4CC45]" />
-            )}
+            <Paperclip className="w-5 h-5 rotate-45" />
           </button>
-        </form>
+
+          {/* Text Input or Active Voice Recording Bar */}
+          {isRecording ? (
+            <div className="flex-1 bg-white rounded-xl px-4 py-2 flex items-center justify-between text-xs border border-rose-300">
+              <div className="flex items-center gap-2 text-rose-600 font-bold">
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-600 animate-ping" />
+                <span>Recording Voice Memo: {recordingSeconds}s</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleStopRecordingAndAttach}
+                className="px-3 py-1 rounded-lg bg-[#25D366] text-white font-heading font-bold text-xs shadow-xs"
+              >
+                Done
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSendMessage} className="flex-1 flex items-center">
+              <input
+                type="text"
+                placeholder="Type a message"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                className="w-full px-4 py-2.5 text-xs rounded-xl bg-white text-[#111B21] placeholder:text-[#8696A0] focus:outline-hidden border-none shadow-xs"
+              />
+            </form>
+          )}
+
+          {/* Mic Button (Voice Recording) */}
+          {!inputText.trim() && !attachedFile && !isRecording ? (
+            <button
+              type="button"
+              onClick={handleStartRecording}
+              className="p-2.5 text-[#54656F] hover:text-[#111B21] hover:bg-[#E9EDEF] rounded-full transition-colors cursor-pointer"
+              title="Record Voice Note"
+            >
+              <Mic className="w-5 h-5" />
+            </button>
+          ) : (
+            /* Send Button */
+            <button
+              type="button"
+              onClick={() => handleSendMessage()}
+              disabled={sending}
+              className="w-10 h-10 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-white flex items-center justify-center shadow-md transition-all cursor-pointer"
+              title="Send Message"
+            >
+              <Send className="w-4 h-4 ml-0.5" />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
