@@ -20,7 +20,8 @@ import {
   Phone,
   VideoIcon,
   Trash2,
-  Check
+  Check,
+  ChevronLeft
 } from 'lucide-react';
 
 export interface ChatMessage {
@@ -66,6 +67,7 @@ export default function TutorAstraChatBox({
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [searchContact, setSearchContact] = useState('');
   const [showAttachMenu, setShowAttachMenu] = useState(false);
+  const [mobileView, setMobileView] = useState<'contacts' | 'chat'>('chat');
 
   // Attachments State
   const [attachedFile, setAttachedFile] = useState<{
@@ -110,7 +112,7 @@ export default function TutorAstraChatBox({
       if (currentRole === 'teacher') {
         endpoint = `/api/teacher/box?student_user_id=${activePartner.id}`;
       } else if (currentRole === 'student') {
-        endpoint = `/api/student/box`;
+        endpoint = `/api/student/box?teacher_user_id=${activePartner.id}`;
       } else if (currentRole === 'admin') {
         endpoint = `/api/admin/chat?partner_user_id=${activePartner.id}`;
       }
@@ -257,7 +259,7 @@ export default function TutorAstraChatBox({
   };
 
   return (
-    <div className="bg-[#FFFFFF] rounded-2xl border border-[#ECE6DA] shadow-lg overflow-hidden flex flex-col md:flex-row h-[720px] max-w-6xl mx-auto w-full">
+    <div className="bg-[#FFFFFF] rounded-2xl border border-[#ECE6DA] shadow-md overflow-hidden flex flex-col md:flex-row h-full min-h-[460px] max-h-full w-full">
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}
@@ -276,9 +278,9 @@ export default function TutorAstraChatBox({
       {/* ======================================================== */}
       {/* LEFT PANEL: WHATSAPP-STYLE CONTACTS LIST */}
       {/* ======================================================== */}
-      <div className="w-full md:w-80 lg:w-96 border-r border-[#ECE6DA] flex flex-col bg-[#FFFFFF] shrink-0">
+      <div className={`w-full md:w-80 lg:w-96 border-r border-[#ECE6DA] flex-col bg-[#FFFFFF] shrink-0 h-full ${mobileView === 'contacts' ? 'flex' : 'hidden md:flex'}`}>
         {/* Left Header */}
-        <div className="bg-[#F0F2F5] px-4 py-3 flex items-center justify-between border-b border-[#E9EDEF]">
+        <div className="bg-[#F0F2F5] px-4 py-3 flex items-center justify-between border-b border-[#E9EDEF] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#310064] text-[#F4CC45] flex items-center justify-center font-heading font-black text-sm shadow-xs">
               {currentRole === 'admin' ? 'AD' : currentRole === 'teacher' ? 'TC' : 'ST'}
@@ -300,7 +302,7 @@ export default function TutorAstraChatBox({
         </div>
 
         {/* Search Bar */}
-        <div className="p-2.5 bg-[#FFFFFF] border-b border-[#F0F2F5]">
+        <div className="p-2.5 bg-[#FFFFFF] border-b border-[#F0F2F5] shrink-0">
           <div className="relative">
             <Search className="w-4 h-4 text-[#54656F] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
@@ -333,7 +335,10 @@ export default function TutorAstraChatBox({
                 <button
                   key={partner.id}
                   type="button"
-                  onClick={() => onSelectPartner(partner)}
+                  onClick={() => {
+                    onSelectPartner(partner);
+                    setMobileView('chat');
+                  }}
                   className={`w-full p-3 flex items-center gap-3 text-left transition-colors cursor-pointer ${
                     isActive ? 'bg-[#F0F2F5]' : 'hover:bg-[#F5F6F6] bg-white'
                   }`}
@@ -369,11 +374,20 @@ export default function TutorAstraChatBox({
       {/* ======================================================== */}
       {/* RIGHT PANEL: WHATSAPP-STYLE ACTIVE CHAT SCREEN */}
       {/* ======================================================== */}
-      <div className="flex-1 flex flex-col bg-[#EFEAE2] min-w-0">
+      <div className={`flex-1 flex-col bg-[#EFEAE2] min-w-0 h-full ${mobileView === 'chat' ? 'flex' : 'hidden md:flex'}`}>
         {/* Right Active Header */}
-        <div className="bg-[#F0F2F5] px-4 py-2.5 flex items-center justify-between border-b border-[#E9EDEF] shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center font-heading font-black text-xs shadow-xs">
+        <div className="bg-[#F0F2F5] px-3 sm:px-4 py-2 flex items-center justify-between border-b border-[#E9EDEF] shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => setMobileView('contacts')}
+              className="md:hidden p-1.5 -ml-1 text-[#54656F] hover:text-[#111B21] hover:bg-[#E9EDEF] rounded-lg transition-colors cursor-pointer"
+              title="Back to Contacts"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center font-heading font-black text-xs shadow-xs shrink-0">
               {activePartner?.name
                 .split(' ')
                 .map((n) => n[0])
@@ -381,19 +395,19 @@ export default function TutorAstraChatBox({
                 .substring(0, 2)
                 .toUpperCase() || 'TA'}
             </div>
-            <div>
-              <h3 className="font-heading font-bold text-sm text-[#111B21]">
+            <div className="min-w-0">
+              <h3 className="font-heading font-bold text-xs sm:text-sm text-[#111B21] truncate">
                 {activePartner?.name}
               </h3>
-              <p className="text-[11px] text-emerald-600 font-medium">
+              <p className="text-[10px] sm:text-[11px] text-emerald-600 font-medium truncate">
                 Online • {activePartner?.subjectName || `${activePartner?.role} Account`}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-[#54656F]">
-            <span className="text-[11px] font-bold text-[#310064] bg-[#F2ECFC] px-2.5 py-0.5 rounded-full">
-              Permanent Cloud Sync
+          <div className="flex items-center gap-2 sm:gap-4 text-[#54656F] shrink-0">
+            <span className="text-[10px] sm:text-[11px] font-bold text-[#310064] bg-[#F2ECFC] px-2 sm:px-2.5 py-0.5 rounded-full">
+              Permanent Sync
             </span>
           </div>
         </div>

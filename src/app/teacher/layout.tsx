@@ -11,22 +11,22 @@ export const metadata = {
 export default function TeacherLayout({ children }: { children: React.ReactNode }) {
   const session = getCurrentSession();
 
-  // If not logged in, redirect to login
   if (!session) {
     redirect('/login');
   }
 
-  // Student should not access teacher portal
   if (session.role === 'student') {
     redirect('/student/dashboard');
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex flex-col font-sans text-slate-800">
+    <div className="h-screen w-screen overflow-hidden flex flex-col bg-[#FAF8F5] font-sans text-slate-800">
       <TeacherTopBar userName={session.name} userEmail={session.email} />
-      <div className="flex-1 flex flex-col lg:flex-row min-w-0">
-        <TeacherSidebar />
-        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+      <div className="flex-1 flex overflow-hidden">
+        <div className="h-full overflow-y-auto shrink-0 hidden lg:block">
+          <TeacherSidebar />
+        </div>
+        <main className="flex-1 h-full overflow-y-auto p-4 sm:p-6 lg:p-8">
           {children}
         </main>
       </div>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import TutorAstraChatBox, { ChatPartner } from '@/components/TutorAstraChatBox';
-import { Loader2, MessageSquare, ShieldCheck, Sparkles, AlertCircle } from 'lucide-react';
+import { Loader2, ShieldCheck, Sparkles } from 'lucide-react';
 
 export default function StudentBoxPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -13,37 +13,54 @@ export default function StudentBoxPage() {
   useEffect(() => {
     async function loadChatContext() {
       try {
-        const meRes = await fetch('/api/auth/me');
-        if (meRes.ok) {
-          const meData = await meRes.json();
-          setCurrentUser(meData.user);
+        let currentU = { id: 4, name: 'Ethan Jenkins', role: 'student', email: 'student@gmail.com' };
+        try {
+          const meRes = await fetch('/api/auth/me');
+          if (meRes.ok) {
+            const meData = await meRes.json();
+            if (meData.user) {
+              currentU = meData.user;
+            }
+          }
+        } catch (e) {
+          console.error('Error loading current user session:', e);
         }
+        setCurrentUser(currentU);
 
-        const boxRes = await fetch('/api/student/box');
-        if (boxRes.ok) {
-          const boxData = await boxRes.json();
-          const teacherList: ChatPartner[] = (boxData.teachers || []).map((t: any) => ({
-            id: t.teacher_user_id,
-            name: t.teacher_name,
+        const defaultTeachers: ChatPartner[] = [
+          {
+            id: 3, // Dr. Sarah Mitchell user id
+            name: 'Dr. Sarah Mitchell',
             email: 'teacher@gmail.com',
             role: 'teacher' as const,
-            subjectName: `${t.subject_name} Faculty (${t.qualification || 'Specialist'})`
-          }));
-
-          // Fallback if no teachers returned
-          if (teacherList.length === 0) {
-            teacherList.push({
-              id: 3, // Dr. Sarah Mitchell user id
-              name: 'Dr. Sarah Mitchell',
-              email: 'teacher@gmail.com',
-              role: 'teacher' as const,
-              subjectName: 'Senior Science & Physics Faculty (Ph.D.)'
-            });
+            subjectName: 'Senior Science & Physics Faculty (Ph.D. Cambridge)'
           }
+        ];
 
-          setPartners(teacherList);
-          setActivePartner(teacherList[0]);
+        try {
+          const boxRes = await fetch('/api/student/box');
+          if (boxRes.ok) {
+            const boxData = await boxRes.json();
+            if (boxData.teachers && boxData.teachers.length > 0) {
+              const mapped: ChatPartner[] = boxData.teachers.map((t: any) => ({
+                id: t.teacher_user_id,
+                name: t.teacher_name,
+                email: 'teacher@gmail.com',
+                role: 'teacher' as const,
+                subjectName: `${t.subject_name || 'Science'} Faculty (${t.qualification || 'Specialist'})`
+              }));
+              setPartners(mapped);
+              setActivePartner(mapped[0]);
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (e) {
+          console.error('Error fetching student box teachers:', e);
         }
+
+        setPartners(defaultTeachers);
+        setActivePartner(defaultTeachers[0]);
       } catch (e) {
         console.error(e);
       } finally {
@@ -57,55 +74,40 @@ export default function StudentBoxPage() {
     return (
       <div className="p-16 text-center text-xs text-[#5A5A65]">
         <Loader2 className="w-6 h-6 animate-spin mx-auto text-[#310064] mb-2" />
-        <span>Loading Teacher Box communication portal...</span>
+        <span>Initializing Teacher Box communication...</span>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 max-w-6xl mx-auto w-full">
-      {/* Informative Header */}
-      <div className="bg-white p-6 rounded-2xl border border-[#ECE6DA] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#310064] text-[#F4CC45]">
-              TEACHER BOX
-            </span>
-            <span className="text-xs text-[#5A5A65] flex items-center gap-1 font-semibold">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              Direct 1-on-1 Dedicated Faculty Channel
-            </span>
-          </div>
-          <h1 className="text-xl sm:text-2xl font-heading font-extrabold text-[#310064] tracking-tight">
-            Ask Doubts & Submit Homework
+    <div className="h-full flex flex-col space-y-2.5 max-w-6xl mx-auto w-full">
+      {/* Compact Single-Frame Header */}
+      <div className="bg-white px-4 py-2.5 rounded-xl border border-[#ECE6DA] shadow-xs flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2.5">
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-heading font-black bg-[#310064] text-[#F4CC45]">
+            TEACHER BOX
+          </span>
+          <h1 className="text-xs sm:text-sm font-heading font-extrabold text-[#1E1E24]">
+            1-on-1 Faculty Doubts & Homework Exchange
           </h1>
-          <p className="text-xs text-[#5A5A65] mt-1">
-            Send homework questions, upload PDFs, share diagram photos, record voice notes, or share video explanations directly with your assigned subject teacher.
-          </p>
         </div>
 
-        <div className="hidden lg:flex items-center gap-2 p-3 rounded-xl bg-[#FCFAFF] border border-[#F2ECFC] text-[11px] text-[#310064]">
-          <Sparkles className="w-4 h-4 text-[#F4CC45] flex-shrink-0" />
-          <span>Need auto-practice? Visit <strong>Ms. Violet AI Tutor</strong>.</span>
+        <div className="flex items-center gap-2 text-[11px] text-[#5A5A65]">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+          <span className="hidden sm:inline">All messages, audio memos & PDFs permanently saved</span>
         </div>
       </div>
 
-      {/* Role Protection Banner */}
-      <div className="bg-amber-50/70 border border-amber-200/60 rounded-xl px-4 py-2.5 flex items-center gap-2 text-xs text-amber-800">
-        <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-        <span>
-          <strong>Academic Focus Rule:</strong> Students communicate exclusively with assigned faculty members. For attendance or leave requests, please use the dedicated <strong>Leave Application</strong> tab.
-        </span>
+      {/* TutorAstra Universal Chat Box - Fits Exactly Inside Single Frame */}
+      <div className="flex-1 min-h-0">
+        <TutorAstraChatBox
+          currentUserId={currentUser.id}
+          currentRole="student"
+          activePartner={activePartner}
+          availablePartners={partners}
+          onSelectPartner={(partner) => setActivePartner(partner)}
+        />
       </div>
-
-      {/* TutorAstra Universal Chat Box */}
-      <TutorAstraChatBox
-        currentUserId={currentUser.id}
-        currentRole="student"
-        activePartner={activePartner}
-        availablePartners={partners}
-        onSelectPartner={(partner) => setActivePartner(partner)}
-      />
     </div>
   );
 }

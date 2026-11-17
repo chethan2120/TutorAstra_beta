@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
   MessageCircle,
@@ -80,6 +80,7 @@ const FAQ_KNOWLEDGE_BASE = [
 
 export default function AcademicAdvisorChatbot() {
   const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
@@ -373,6 +374,16 @@ export default function AcademicAdvisorChatbot() {
       }
     }, 400);
   };
+
+  if (
+    pathname?.startsWith('/login') ||
+    pathname?.startsWith('/parent-login') ||
+    pathname?.startsWith('/admin') ||
+    pathname?.startsWith('/teacher') ||
+    pathname?.startsWith('/student')
+  ) {
+    return null;
+  }
 
   return (
     <>

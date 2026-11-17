@@ -28,7 +28,7 @@ export default function AdminLayout({
       {/* Main Dual-Scroll Workspace with Independent Scrollbars */}
       <div className="flex-1 flex flex-col lg:flex-row min-h-0 min-w-0 overflow-hidden">
         {/* Sidebar Container with its own independent scrollbar */}
-        <div className="h-full shrink-0 overflow-y-auto border-r border-[#ECE6DA] bg-white custom-scrollbar">
+        <div className="h-full shrink-0 overflow-y-auto border-r border-[#ECE6DA] bg-white custom-scrollbar hidden lg:block">
           <AdminSidebar userEmail={session.email} userName={session.name} />
         </div>
 
