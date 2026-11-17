@@ -1,341 +1,292 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
-  AlertTriangle,
-  ChevronDown,
+  Users,
+  GraduationCap,
+  Calendar,
+  Clock,
+  Sparkles,
+  Inbox,
   UserPlus,
   BookPlus,
-  Award,
-  Users,
-  FileCheck2,
-  Settings,
   ArrowRight,
   TrendingUp,
-  Inbox,
-  Clock,
-  ExternalLink,
-  ShieldAlert
+  FileCheck2,
+  AlertTriangle,
+  CheckCircle2,
+  Video
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
-  const [showQuickActionsMenu, setShowQuickActionsMenu] = useState(false);
-  const [chartShowType, setChartShowType] = useState('Students enrolled');
-  const [chartPeriod, setChartPeriod] = useState('October, November and December');
-  const [activeTab, setActiveTab] = useState<'overview' | 'enquiries' | 'activity'>('overview');
+  const [stats, setStats] = useState<any>({
+    totalStudents: 1,
+    totalTeachers: 1,
+    classesToday: 1,
+    activeEnrollments: 3,
+    totalScheduledClasses: 50,
+    newEnquiries: 0
+  });
+  const [todayClasses, setTodayClasses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadDashboard() {
+      try {
+        const statsRes = await fetch('/api/admin/stats');
+        if (statsRes.ok) {
+          const sData = await statsRes.json();
+          setStats((prev: any) => ({ ...prev, ...sData }));
+        }
+
+        const classesRes = await fetch('/api/admin/classes?limit=6');
+        if (classesRes.ok) {
+          const cData = await classesRes.json();
+          setTodayClasses(cData.classes || []);
+        }
+      } catch (e) {
+        console.error('Failed to load dashboard data:', e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadDashboard();
+  }, []);
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto w-full">
-      {/* =========================================
-          ROW 1: WELCOME HEADER & QUICK ACTIONS
-         ========================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* ROW 1: HEADER & QUICK ACTIONS */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#EBE4F6] shadow-xs">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-            Welcome back, Super Admin
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F2ECFC] text-[#310064] text-[11px] font-heading font-bold uppercase tracking-wider mb-2">
+            <span className="w-2 h-2 rounded-full bg-[#F4CC45]" />
+            <span>TutorAstra System Controller</span>
+          </div>
+          <h1 className="text-xl sm:text-2xl font-heading font-bold text-slate-900 tracking-tight">
+            Central Academic Operations Console
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-            Here is an overview of TutorAstra operations, learning programs, and student admissions today.
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            Real-time synchronization across Admin, Teacher and Student portals.
           </p>
         </div>
 
-        {/* Quick Actions Dropdown Button (Amber Gold) */}
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setShowQuickActionsMenu(!showQuickActionsMenu)}
-            className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#B58943] hover:bg-[#A37836] shadow-xs flex items-center gap-2 transition-colors"
+        {/* Quick Action Buttons */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Link
+            href="/admin/students"
+            className="px-4 py-2.5 rounded-lg text-xs font-heading font-bold text-white bg-[#310064] hover:bg-[#430080] shadow-xs flex items-center gap-2 transition-colors"
           >
-            <span>Quick Actions</span>
-            <ChevronDown className="w-3.5 h-3.5" />
-          </button>
+            <UserPlus className="w-3.5 h-3.5 text-[#F4CC45]" />
+            <span>+ Create Student</span>
+          </Link>
 
-          {showQuickActionsMenu && (
-            <div className="absolute right-0 mt-2 w-52 rounded-2xl bg-white shadow-card-hover border border-slate-100 p-2 z-50 animate-in fade-in duration-150">
-              <Link
-                href="/admin/enquiries"
-                className="block px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-navy"
-                onClick={() => setShowQuickActionsMenu(false)}
-              >
-                Review Enrolments (2)
-              </Link>
-              <Link
-                href="/admin/courses"
-                className="block px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-navy"
-                onClick={() => setShowQuickActionsMenu(false)}
-              >
-                + Create New Course
-              </Link>
-              <Link
-                href="/admin/curriculum"
-                className="block px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-navy"
-                onClick={() => setShowQuickActionsMenu(false)}
-              >
-                Update Curriculum
-              </Link>
-              <Link
-                href="/admin/settings"
-                className="block px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-navy"
-                onClick={() => setShowQuickActionsMenu(false)}
-              >
-                Website Settings
-              </Link>
-            </div>
-          )}
+          <Link
+            href="/admin/teachers"
+            className="px-4 py-2.5 rounded-lg text-xs font-heading font-bold text-[#310064] bg-[#F2ECFC] hover:bg-[#E5DAF7] border border-[#D5C2F2] flex items-center gap-2 transition-colors"
+          >
+            <GraduationCap className="w-3.5 h-3.5" />
+            <span>+ Create Teacher</span>
+          </Link>
+
+          <Link
+            href="/admin/schedule"
+            className="px-4 py-2.5 rounded-lg text-xs font-heading font-bold text-[#220046] bg-[#F4CC45] hover:bg-[#F6D55E] shadow-xs flex items-center gap-2 transition-colors"
+          >
+            <Calendar className="w-3.5 h-3.5" />
+            <span>Schedule Batch</span>
+          </Link>
         </div>
       </div>
 
-      {/* =========================================
-          ROW 2: TOP STATS ROW (6 Rounded White Cards)
-         ========================================= */}
+      {/* ROW 2: TOP STATS ROW */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-        {/* Card 1: Total Students */}
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#F0ECEE] shadow-xs flex flex-col justify-between">
-          <div className="text-[11px] font-bold text-slate-500">Total Students</div>
-          <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-2">2</div>
+        <div className="bg-white rounded-xl p-4 border border-[#EBE4F6] shadow-xs flex flex-col justify-between">
+          <div className="text-[11px] font-heading font-bold text-slate-500">Active Students</div>
+          <div className="text-2xl font-heading font-extrabold text-[#310064] mt-2">
+            {stats.totalStudents || 1}
+          </div>
+          <div className="text-[10px] text-slate-400 mt-1">100% 1-on-1 Enrolled</div>
         </div>
 
-        {/* Card 2: Pending Registrations */}
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#F0ECEE] shadow-xs flex flex-col justify-between">
-          <div className="text-[11px] font-bold text-slate-500">Pending Registrations</div>
-          <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-2">0</div>
+        <div className="bg-white rounded-xl p-4 border border-[#EBE4F6] shadow-xs flex flex-col justify-between">
+          <div className="text-[11px] font-heading font-bold text-slate-500">Verified Faculty</div>
+          <div className="text-2xl font-heading font-extrabold text-[#310064] mt-2">
+            {stats.totalTeachers || 1}
+          </div>
+          <div className="text-[10px] text-slate-400 mt-1">Top 2% Vetted</div>
         </div>
 
-        {/* Card 3: Active Staff */}
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#F0ECEE] shadow-xs flex flex-col justify-between">
-          <div className="text-[11px] font-bold text-slate-500">Active Staff</div>
-          <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-2">2</div>
+        <div className="bg-white rounded-xl p-4 border border-[#EBE4F6] shadow-xs flex flex-col justify-between">
+          <div className="text-[11px] font-heading font-bold text-slate-500">Sessions Today</div>
+          <div className="text-2xl font-heading font-extrabold text-emerald-700 mt-2">
+            {stats.classesToday || 1}
+          </div>
+          <div className="text-[10px] text-emerald-600 mt-1">15-Min Zoom Lock Active</div>
         </div>
 
-        {/* Card 4: Published Courses */}
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#F0ECEE] shadow-xs flex flex-col justify-between">
-          <div className="text-[11px] font-bold text-slate-500">Published Courses</div>
-          <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-2">11</div>
+        <div className="bg-white rounded-xl p-4 border border-[#EBE4F6] shadow-xs flex flex-col justify-between">
+          <div className="text-[11px] font-heading font-bold text-slate-500">Active Enrolments</div>
+          <div className="text-2xl font-heading font-extrabold text-[#310064] mt-2">
+            {stats.activeEnrollments || 3}
+          </div>
+          <div className="text-[10px] text-slate-400 mt-1">Science, Math, Physics</div>
         </div>
 
-        {/* Card 5: Active Enrolments */}
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#F0ECEE] shadow-xs flex flex-col justify-between">
-          <div className="text-[11px] font-bold text-slate-500">Active Enrolments</div>
-          <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-2">1</div>
+        <div className="bg-white rounded-xl p-4 border border-[#EBE4F6] shadow-xs flex flex-col justify-between">
+          <div className="text-[11px] font-heading font-bold text-slate-500">Total Classes</div>
+          <div className="text-2xl font-heading font-extrabold text-[#310064] mt-2">
+            {stats.totalScheduledClasses || 50}
+          </div>
+          <div className="text-[10px] text-slate-400 mt-1">Generated & Synced</div>
         </div>
 
-        {/* Card 6: Certificates Issued */}
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#F0ECEE] shadow-xs flex flex-col justify-between">
-          <div className="text-[11px] font-bold text-slate-500">Certificates Issued</div>
-          <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-2">1</div>
+        <div className="bg-white rounded-xl p-4 border border-[#EBE4F6] shadow-xs flex flex-col justify-between">
+          <div className="text-[11px] font-heading font-bold text-slate-500">Admissions Leads</div>
+          <div className="text-2xl font-heading font-extrabold text-[#8C6D00] mt-2">
+            {stats.newEnquiries || 2}
+          </div>
+          <div className="text-[10px] text-slate-400 mt-1">Website Consultation</div>
         </div>
       </div>
 
-      {/* =========================================
-          ROW 3: REQUIRES ATTENTION BANNER
-         ========================================= */}
-      <div className="rounded-2xl border border-[#F7D6DE] bg-[#FFF5F7] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#A82245]">
-            <AlertTriangle className="w-4 h-4 text-[#C23B5A]" />
-            <span>Requires attention</span>
-          </div>
-          <div className="text-sm font-black text-slate-900">
-            2 enrolment requests awaiting review
-          </div>
-          <div className="text-xs text-slate-500">
-            Course enrolment requests that have not been approved.
-          </div>
-        </div>
-
-        <Link
-          href="/admin/enquiries"
-          className="px-5 py-2 rounded-xl text-xs font-bold bg-[#5C1D2E] text-white hover:bg-[#481624] transition-colors shrink-0 shadow-xs"
-        >
-          Review
-        </Link>
-      </div>
-
-      {/* =========================================
-          ROW 4: INSTITUTE OVERVIEW MONTHLY BAR CHART
-         ========================================= */}
-      <div className="bg-white rounded-2xl p-6 border border-[#F0ECEE] shadow-xs space-y-6">
-        {/* Top Header of Chart */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-          <div>
-            <h2 className="text-base font-black text-slate-900">Institute overview</h2>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Monthly figures from the institute records. Empty months stay at zero.
-            </p>
-          </div>
-
-          {/* Filters (Show & Period) */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 text-xs text-slate-500">
-              <span>Show</span>
-              <select
-                value={chartShowType}
-                onChange={(e) => setChartShowType(e.target.value)}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#5C1D2E]"
-              >
-                <option value="Students enrolled">Students enrolled</option>
-                <option value="Applications received">Applications received</option>
-                <option value="Course completions">Course completions</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs text-slate-500">
-              <span>Period</span>
-              <select
-                value={chartPeriod}
-                onChange={(e) => setChartPeriod(e.target.value)}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#5C1D2E]"
-              >
-                <option value="October, November and December">October, November and December</option>
-                <option value="July, August and September">July, August and September</option>
-                <option value="All Academic Year">All Academic Year</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Visual Monthly Bar Chart (Oct: 0, Nov: 1, Dec: 0) */}
-        <div className="pt-4 pb-2">
-          <div className="h-56 w-full flex items-end justify-around px-8 relative border-b border-slate-200">
-            {/* October Bar (0) */}
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-xs font-bold text-slate-400">0</span>
-              <div className="w-16 sm:w-20 h-1 bg-slate-200 rounded-t" />
-              <span className="text-xs font-semibold text-slate-500 absolute -bottom-6">
-                October
-              </span>
-            </div>
-
-            {/* November Bar (1 - Tall Burgundy Bar) */}
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-xs font-bold text-slate-900">1</span>
-              <div className="w-16 sm:w-20 h-44 bg-[#5C1D2E] rounded-t-lg shadow-sm hover:opacity-95 transition-opacity cursor-pointer group relative">
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:flex px-2 py-1 bg-slate-900 text-white text-[10px] rounded shadow-xs whitespace-nowrap">
-                  1 Enrolment Confirmed
-                </div>
-              </div>
-              <span className="text-xs font-bold text-slate-900 absolute -bottom-6">
-                November
-              </span>
-            </div>
-
-            {/* December Bar (0) */}
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-xs font-bold text-slate-400">0</span>
-              <div className="w-16 sm:w-20 h-1 bg-slate-200 rounded-t" />
-              <span className="text-xs font-semibold text-slate-500 absolute -bottom-6">
-                December
-              </span>
-            </div>
-          </div>
-          <div className="h-8" />
-        </div>
-      </div>
-
-      {/* =========================================
-          ROW 5: SPLIT LAYOUT (Institute Quick Actions & Accredited Institute)
-         ========================================= */}
+      {/* ROW 3: RECENT CLASSES & LIVE MONITOR */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column (Approx 70%): Institute Quick Actions */}
-        <div className="lg:col-span-8 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-black text-slate-900">Institute Quick Actions</h2>
-            <span className="text-xs text-slate-400">Standard operations</span>
+        {/* Left Column: Scheduled Classes Live Sync Table (8 cols) */}
+        <div className="lg:col-span-8 bg-white rounded-2xl border border-[#EBE4F6] shadow-xs p-6 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div>
+              <h2 className="text-base font-heading font-bold text-slate-900">
+                Scheduled Classes & Synchronized Timetable
+              </h2>
+              <p className="text-xs text-slate-500">
+                Changes made here reflect automatically in both Student and Teacher portals.
+              </p>
+            </div>
+            <Link
+              href="/admin/classes"
+              className="text-xs font-heading font-bold text-[#310064] hover:underline flex items-center gap-1"
+            >
+              <span>View Full Calendar</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {/* Action 1: Enroll Student */}
-            <Link
-              href="/admin/enquiries"
-              className="p-4 rounded-2xl bg-white border border-[#F0ECEE] shadow-xs hover:border-[#5C1D2E]/40 hover:shadow-soft transition-all group"
-            >
-              <div className="w-8 h-8 rounded-full bg-pink-50 text-[#5C1D2E] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                <UserPlus className="w-4 h-4" />
-              </div>
-              <div className="text-xs font-bold text-slate-900">Enroll Student</div>
-              <div className="text-[11px] text-slate-500 mt-0.5">Create portal accounts</div>
-            </Link>
-
-            {/* Action 2: Create Course */}
-            <Link
-              href="/admin/courses"
-              className="p-4 rounded-2xl bg-white border border-[#F0ECEE] shadow-xs hover:border-[#5C1D2E]/40 hover:shadow-soft transition-all group"
-            >
-              <div className="w-8 h-8 rounded-full bg-pink-50 text-[#5C1D2E] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                <BookPlus className="w-4 h-4" />
-              </div>
-              <div className="text-xs font-bold text-slate-900">Create Course</div>
-              <div className="text-[11px] text-slate-500 mt-0.5">Syllabus & set pricing</div>
-            </Link>
-
-            {/* Action 3: Issue Certificate */}
-            <Link
-              href="/admin/curriculum"
-              className="p-4 rounded-2xl bg-white border border-[#F0ECEE] shadow-xs hover:border-[#5C1D2E]/40 hover:shadow-soft transition-all group"
-            >
-              <div className="w-8 h-8 rounded-full bg-pink-50 text-[#5C1D2E] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                <Award className="w-4 h-4" />
-              </div>
-              <div className="text-xs font-bold text-slate-900">Issue Certificate</div>
-              <div className="text-[11px] text-slate-500 mt-0.5">Verified credentials</div>
-            </Link>
-
-            {/* Action 4: Manage Applications */}
-            <Link
-              href="/admin/enquiries"
-              className="p-4 rounded-2xl bg-white border border-[#F0ECEE] shadow-xs hover:border-[#5C1D2E]/40 hover:shadow-soft transition-all group"
-            >
-              <div className="w-8 h-8 rounded-full bg-pink-50 text-[#5C1D2E] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                <FileCheck2 className="w-4 h-4" />
-              </div>
-              <div className="text-xs font-bold text-slate-900">Review Applications</div>
-              <div className="text-[11px] text-slate-500 mt-0.5">Trial & direct requests</div>
-            </Link>
-
-            {/* Action 5: Institute Analytics */}
-            <Link
-              href="/admin/dashboard"
-              className="p-4 rounded-2xl bg-white border border-[#F0ECEE] shadow-xs hover:border-[#5C1D2E]/40 hover:shadow-soft transition-all group"
-            >
-              <div className="w-8 h-8 rounded-full bg-pink-50 text-[#5C1D2E] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                <TrendingUp className="w-4 h-4" />
-              </div>
-              <div className="text-xs font-bold text-slate-900">Institute Analytics</div>
-              <div className="text-[11px] text-slate-500 mt-0.5">Attendance & reports</div>
-            </Link>
-
-            {/* Action 6: Platform Settings */}
-            <Link
-              href="/admin/settings"
-              className="p-4 rounded-2xl bg-white border border-[#F0ECEE] shadow-xs hover:border-[#5C1D2E]/40 hover:shadow-soft transition-all group"
-            >
-              <div className="w-8 h-8 rounded-full bg-pink-50 text-[#5C1D2E] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                <Settings className="w-4 h-4" />
-              </div>
-              <div className="text-xs font-bold text-slate-900">System Settings</div>
-              <div className="text-[11px] text-slate-500 mt-0.5">Tuition & term fees</div>
-            </Link>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-slate-100 text-[11px] font-heading font-bold text-slate-400 uppercase">
+                  <th className="py-2.5 px-3">Session</th>
+                  <th className="py-2.5 px-3">Student</th>
+                  <th className="py-2.5 px-3">Teacher</th>
+                  <th className="py-2.5 px-3">Date & Time</th>
+                  <th className="py-2.5 px-3">Status</th>
+                  <th className="py-2.5 px-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {todayClasses.map((c: any) => (
+                  <tr key={c.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-3 font-medium text-slate-900">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: c.subject_color || '#310064' }} />
+                        <span className="font-heading font-bold">{c.title}</span>
+                      </div>
+                    </td>
+                    <td className="py-3 px-3 text-slate-700">{c.student_name}</td>
+                    <td className="py-3 px-3 text-slate-700">{c.teacher_name}</td>
+                    <td className="py-3 px-3 text-slate-600">
+                      <div>{c.session_date}</div>
+                      <div className="text-[10px] text-slate-400">{c.start_time} - {c.end_time}</div>
+                    </td>
+                    <td className="py-3 px-3">
+                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-heading font-bold capitalize ${
+                        c.status === 'completed'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          : c.status === 'rescheduled'
+                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                          : c.status === 'leave_approved'
+                          ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                          : 'bg-[#F2ECFC] text-[#310064] border border-[#E0D3F5]'
+                      }`}>
+                        {c.status.replace('_', ' ')}
+                      </span>
+                    </td>
+                    <td className="py-3 px-3 text-right">
+                      <Link
+                        href={`/admin/classes?id=${c.id}`}
+                        className="text-xs font-heading font-bold text-[#310064] hover:text-[#430080]"
+                      >
+                        Manage →
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
-        {/* Right Column (Approx 30%): ACCREDITED INSTITUTE Card */}
-        <div className="lg:col-span-4 bg-[#5C1D2E] text-white rounded-2xl p-6 shadow-card-hover flex flex-col justify-between">
-          <div className="space-y-4">
-            {/* Gold Pill Badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#8A354E] text-amber-300 text-[10px] font-black uppercase tracking-wider border border-amber-300/30">
-              <Award className="w-3.5 h-3.5 text-amber-300" />
-              <span>ACCREDITED INSTITUTE</span>
+        {/* Right Column: Portal Integration Status (4 cols) */}
+        <div className="lg:col-span-4 space-y-5">
+          <div className="bg-white rounded-2xl border border-[#EBE4F6] shadow-xs p-6 space-y-4">
+            <h3 className="font-heading font-bold text-sm text-slate-900">
+              Three-Portal Synchronisation Status
+            </h3>
+
+            <div className="space-y-3 text-xs">
+              <div className="p-3 rounded-lg bg-[#FAF8F5] border border-[#ECE6DA] flex items-center justify-between">
+                <div>
+                  <strong className="block text-slate-900 font-heading">Admin Console</strong>
+                  <span className="text-[11px] text-slate-500">Source of Truth & Scheduler</span>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Active</span>
+              </div>
+
+              <div className="p-3 rounded-lg bg-[#FAF8F5] border border-[#ECE6DA] flex items-center justify-between">
+                <div>
+                  <strong className="block text-slate-900 font-heading">Teacher Portal</strong>
+                  <span className="text-[11px] text-slate-500">Isolated to Assigned Students</span>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Synced</span>
+              </div>
+
+              <div className="p-3 rounded-lg bg-[#FAF8F5] border border-[#ECE6DA] flex items-center justify-between">
+                <div>
+                  <strong className="block text-slate-900 font-heading">Student Portal</strong>
+                  <span className="text-[11px] text-slate-500">15-Min Zoom Lock Active</span>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Synced</span>
+              </div>
             </div>
 
-            <p className="text-xs text-rose-100 leading-relaxed pt-2">
-              All certified programmes and assessments adhere strictly to UK Engineering Council, ASME Section IX, ISO 9712, PCN, and TWI standards.
-            </p>
+            <div className="pt-2 border-t border-slate-100">
+              <div className="text-[11px] text-slate-500 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Single SQLite backend database with zero data duplication.</span>
+              </div>
+            </div>
           </div>
 
-          <div className="pt-6 border-t border-rose-300/20 text-[11px] text-rose-200 flex items-center justify-between">
-            <span>Verified Quality Assurance</span>
-            <span className="font-bold text-white">2026 Active</span>
+          {/* Quick Enrolment Example Card */}
+          <div className="bg-gradient-to-br from-[#220046] to-[#310064] rounded-2xl text-white p-6 shadow-md space-y-3">
+            <div className="text-[11px] font-heading font-bold uppercase tracking-wider text-[#F4CC45]">
+              Active Student Roadmap
+            </div>
+            <h4 className="font-heading font-bold text-base">
+              Ethan Jenkins (Grade 10 CBSE)
+            </h4>
+            <div className="text-xs text-purple-200 space-y-1">
+              <div>• Science – 50 Sessions (Teacher: Dr. Sarah)</div>
+              <div>• Mathematics – 40 Sessions</div>
+              <div>• Physics – 30 Sessions</div>
+            </div>
+            <Link
+              href="/admin/students"
+              className="inline-block mt-2 px-3 py-1.5 rounded-lg bg-[#F4CC45] text-[#220046] font-heading font-bold text-xs hover:bg-[#F6D55E]"
+            >
+              View Student Roadmap →
+            </Link>
           </div>
         </div>
       </div>

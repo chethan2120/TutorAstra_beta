@@ -1,17 +1,20 @@
 import crypto from 'crypto';
 import { cookies } from 'next/headers';
 
-const SESSION_SECRET = process.env.ADMIN_SESSION_SECRET || 'ednxt_super_secret_session_key_2026';
+const SESSION_SECRET = process.env.ADMIN_SESSION_SECRET || 'tutorastra_super_secret_session_key_2026';
 const COOKIE_NAME = 'ednxt_admin_session';
 
-export interface AdminSession {
+export interface UserSession {
+  id?: number;
   email: string;
   name: string;
-  role: string;
+  role: 'admin' | 'teacher' | 'student' | string;
   exp: number;
 }
 
-export function signSession(payload: Omit<AdminSession, 'exp'>): string {
+export type AdminSession = UserSession;
+
+export function signSession(payload: Omit<UserSession, 'exp'>): string {
   const exp = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7; // 7 days
   const data = JSON.stringify({ ...payload, exp });
   const encoded = Buffer.from(data).toString('base64url');
@@ -19,7 +22,7 @@ export function signSession(payload: Omit<AdminSession, 'exp'>): string {
   return `${encoded}.${signature}`;
 }
 
-export function verifySession(token: string): AdminSession | null {
+export function verifySession(token: string): UserSession | null {
   try {
     const [encoded, signature] = token.split('.');
     if (!encoded || !signature) return null;
@@ -28,7 +31,7 @@ export function verifySession(token: string): AdminSession | null {
     if (signature !== expectedSignature) return null;
 
     const json = Buffer.from(encoded, 'base64url').toString('utf8');
-    const session = JSON.parse(json) as AdminSession;
+    const session = JSON.parse(json) as UserSession;
 
     if (Date.now() / 1000 > session.exp) {
       return null; // Expired
@@ -40,7 +43,7 @@ export function verifySession(token: string): AdminSession | null {
   }
 }
 
-export function getCurrentSession(): AdminSession | null {
+export function getCurrentSession(): UserSession | null {
   const cookieStore = cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
